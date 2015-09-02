@@ -8,7 +8,7 @@
 This allows you to 
 
 * control Philips Hue Bulbs and Lamps over the Internet,
-* define complex stage designs, storyboards and timer controlled execution 
+* define complex scenes, storyboards and timer controlled execution 
 
 by means of [thing-it-node](https://github.com/marcgille/thing-it-node) and [thing-it.com](http://www.thing-it.com).
 

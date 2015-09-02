@@ -20,6 +20,20 @@ module.exports = {
             type: {
                 id: "string"
             }
+        }, {
+            id: "port",
+            label: "Port",
+            type: {
+                id: "integer"
+            },
+            default: "8080"
+        }, , {
+            id: "timeout",
+            label: "Timeout",
+            type: {
+                id: "integer"
+            },
+            default: "20000"
         }]
     },
     create: function () {
