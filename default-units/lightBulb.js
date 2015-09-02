@@ -12,25 +12,85 @@ module.exports = {
             id: "off",
             label: "Off"
         }, {
-            id: "blink",
-            label: "Blink"
+            id: "toggle",
+            label: "Toggle"
         }, {
-            id: "setIntensity",
-            label: "Set Intensity"
-        }],
-        state: [{
-            id: "blink",
-            label: "Blink",
-            type: {
-                id: "boolean"
-            }
+            id: "hsl",
+            label: "Set HSL"
         }, {
-            id: "intensity",
-            label: "Intensity",
-            type: {
-                id: "integer"
-            }
+            id: "shortAlert",
+            label: "Short Alert"
+        }, {
+            id: "longAlert",
+            label: "Long Alert"
         }],
+        state: [
+            {
+                id: "on", label: "On",
+                type: {
+                    id: "boolean"
+                }
+            },
+            {
+                id: "brightness", label: "Brightness",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "hue", label: "Hue",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "saturation", label: "Saturation",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "x", label: "X",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "y", label: "Y",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "colorTemperature", label: "Color Temperature",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "alert", label: "Alert",
+                type: {
+                    id: "string"
+                }
+            },
+            {
+                id: "effect", label: "Effect",
+                type: {
+                    id: "string"
+                }
+            },
+            {
+                id: "colorMode", label: "Color Mode",
+                type: {
+                    id: "string"
+                }
+            },
+            {
+                id: "reachable", label: "Reachable",
+                type: {
+                    id: "boolean"
+                }
+            }],
         configuration: [{
             label: "ID",
             id: "id",
@@ -57,15 +117,27 @@ function LightBulb() {
     LightBulb.prototype.start = function () {
         var deferred = q.defer();
 
-        this.state = {
-            blink: false,
-            intensity: 0
-        };
-
-        if (!this.isSimulated()) {
-            try {
-            } catch (error) {
+        if (this.isSimulated()) {
+            this.state = {
+                on: true,
+                brightness: 254,
+                hue: 34515,
+                saturation: 236,
+                x: 0.3138,
+                y: 0.3239,
+                colorTemperature: 153,
+                alert: "none",
+                effect: "none",
+                colorMode: "ct",
+                reachable: true
+            };
+        }
+        else {
+            if (!hue) {
+                hue = require('node-hue-api');
             }
+
+            this.lightState = hue.lightState.create();
         }
 
         deferred.resolve();
@@ -77,51 +149,140 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.getState = function () {
-        return this.state;
+        if (this.isSimulated()) {
+            return this.state;
+        }
+        else {
+            return {
+                on: this.lightState.on,
+                brightness: this.lightState.bright,
+                hue: this.lightState.hue,
+                saturation: this.lightState.sat,
+                x: this.lightState.xy[0],
+                y: this.lightState.xy[1],
+                colorTemperature: this.lightState.ct,
+                alert: this.lightState.alert,
+                effect: this.lightState.effect,
+                colorMode: this.lightState.colormode,
+                reachable: this.lightState.reachable
+            };
+        }
     };
 
     /**
      *
      */
     LightBulb.prototype.setState = function (state) {
-        this.state = state;
+        if (this.isSimulated()) {
+            this.state = state;
 
-        this.publishStateChange();
+            this.publishStateChange();
+        }
+        else {
+            this.device.hue.setLightState(this.configuration.id, {
+                on: state.on,
+                bright: state.brightness,
+                hue: state.hue,
+                sat: state.saturation,
+                xy: [state.x, state.y],
+                ct: state.colorTemperature,
+                alert: state.alert,
+                effect: state.effect,
+                colormode: state.colorMode,
+                reachable: state.reachable
+            }).then(function () {
+                this.publishStateChange();
+            }.bind(this));
+        }
     };
 
     /**
      *
      */
     LightBulb.prototype.on = function () {
-        this.state.intensity = 255;
+        if (this.isSimulated()) {
+            this.state.on = true;
 
-        this.publishStateChange();
+            this.publishStateChange();
+        } else {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+                this.publishStateChange();
+            }.bind(this));
+
+        }
     };
 
     /**
      *
      */
     LightBulb.prototype.off = function () {
-        this.state.intensity = 0;
+        if (this.isSimulated()) {
+            this.state.on = false;
 
-        this.publishStateChange();
+            this.publishStateChange();
+        } else {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+                this.publishStateChange();
+            }.bind(this));
+        }
     };
 
     /**
      *
      */
-    LightBulb.prototype.setIntensity = function (parameters) {
-        this.state.intensity = parameters.intensity;
-
-        this.publishStateChange();
+    LightBulb.prototype.toggle = function () {
+        if (this.state.on) {
+            this.off();
+        }
+        else {
+            this.on();
+        }
     };
 
     /**
      *
      */
-    LightBulb.prototype.blink = function () {
-        this.state.blink = true;
+    LightBulb.prototype.hsl = function (parameters) {
+        if (this.isSimulated()) {
+            this.state.hue = parameters.hue;
+            this.state.saturation = parameters.saturation;
+            this.state.brightness = parameters.brightness;
 
-        this.publishStateChange();
+            this.publishStateChange();
+        } else {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.hsl(parameters.hue, parameters.saturation, parameters.brightness)).
+                then(function () {
+                    this.publishStateChange();
+                }.bind(this));
+        }
+    };
+
+    /**
+     *
+     */
+    LightBulb.prototype.shortAlert = function (parameters) {
+        if (this.isSimulated()) {
+            this.publishStateChange();
+        } else {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.shortAlert()).
+                then(function () {
+                    this.publishStateChange();
+                }.bind(this));
+        }
+    };
+
+
+    /**
+     *
+     */
+    LightBulb.prototype.longAlert = function (parameters) {
+        if (this.isSimulated()) {
+            this.publishStateChange();
+        } else {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.longAlert()).
+                then(function () {
+                    this.publishStateChange();
+                }.bind(this));
+        }
     };
 };

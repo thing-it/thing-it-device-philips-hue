@@ -14,6 +14,12 @@ module.exports = {
                 id: "string"
             },
             default: "255.255.255.255"
+        }, {
+            id: "userName",
+            label: "User Name",
+            type: {
+                id: "string"
+            }
         }]
     },
     create: function () {
@@ -22,7 +28,7 @@ module.exports = {
 };
 
 var q = require('q');
-var hueApi;
+var hue;
 
 function HueBridge() {
     /**
@@ -34,9 +40,11 @@ function HueBridge() {
         if (this.isSimulated()) {
             deferred.resolve();
         } else {
-            if (!hueApi) {
-                hueApi = require('node-hue-api').HueApi;
+            if (!hue) {
+                hue = require('node-hue-api');
             }
+
+            this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
             deferred.resolve();
         }
