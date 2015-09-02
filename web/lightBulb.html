@@ -1,0 +1,19 @@
+<table class="formTable" style="width: 100%;">
+    <tr style="vertical-align: middle">
+        <td style="padding-left: 5px; width: 50px;">
+            <div id="right" class="circleButton" style="background-color: red;" ng-click="panel.callActorService(component, 'off' )">
+                <div><i class="fa fa-power-off"></i></div>
+            </div>
+        </td>
+        <td style="width: 99%;">
+            <input ti-slider=""
+                   ti-model="component._state.intensity" ti-min="'0'"
+                   ti-max="'100'"
+                   ti-change="panel.callActorService(component, 'setIntensity', {intensity: component._state.intensity} )">
+        </td>
+    <tr style="vertical-align: middle">
+        <td style="padding-left: 5px; width: 50px;">
+        </td>
+    </tr>
+</table>
+
