@@ -15,12 +15,12 @@ module.exports = {
             id: "toggle",
             label: "Toggle"
         }, {
-            id: "changeIntensity",
-            label: "Change Intensity"
+            id: "changeBrightness",
+            label: "Change Brightness"
         }],
         state: [
             {
-                id: "intensity", label: "Intensity",
+                id: "brightness", label: "Brightness",
                 type: {
                     id: "integer"
                 }
@@ -78,7 +78,7 @@ function LightBulb() {
         }
         else {
             return {
-                intensity: this.lightState.bright
+                brightness: this.lightState.bright
             };
         }
     };
@@ -94,7 +94,7 @@ function LightBulb() {
         }
         else {
             this.device.hue.setLightState(this.configuration.id, {
-                bright: state.intensity
+                bright: state.brightness
             }).then(function () {
                 this.publishStateChange();
             }.bind(this));
@@ -126,7 +126,7 @@ function LightBulb() {
 
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+            this.device.hue.setLightState(this.configuration.id, this.lightState.off()).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
@@ -147,9 +147,9 @@ function LightBulb() {
     /**
      *
      */
-    LightBulb.prototype.changeIntensity = function (parameters) {
+    LightBulb.prototype.changeBrightness = function (parameters) {
         if (this.isSimulated()) {
-            this.state.intensity = parameters.intensity;
+            this.state.brightness = parameters.brightness;
 
             this.publishStateChange();
         } else {
