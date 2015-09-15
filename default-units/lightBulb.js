@@ -15,80 +15,14 @@ module.exports = {
             id: "toggle",
             label: "Toggle"
         }, {
-            id: "hsl",
-            label: "Set HSL"
-        }, {
-            id: "shortAlert",
-            label: "Short Alert"
-        }, {
-            id: "longAlert",
-            label: "Long Alert"
+            id: "changeIntensity",
+            label: "Change Intensity"
         }],
         state: [
             {
-                id: "on", label: "On",
-                type: {
-                    id: "boolean"
-                }
-            },
-            {
-                id: "brightness", label: "Brightness",
+                id: "intensity", label: "Intensity",
                 type: {
                     id: "integer"
-                }
-            },
-            {
-                id: "hue", label: "Hue",
-                type: {
-                    id: "integer"
-                }
-            },
-            {
-                id: "saturation", label: "Saturation",
-                type: {
-                    id: "integer"
-                }
-            },
-            {
-                id: "x", label: "X",
-                type: {
-                    id: "integer"
-                }
-            },
-            {
-                id: "y", label: "Y",
-                type: {
-                    id: "integer"
-                }
-            },
-            {
-                id: "colorTemperature", label: "Color Temperature",
-                type: {
-                    id: "integer"
-                }
-            },
-            {
-                id: "alert", label: "Alert",
-                type: {
-                    id: "string"
-                }
-            },
-            {
-                id: "effect", label: "Effect",
-                type: {
-                    id: "string"
-                }
-            },
-            {
-                id: "colorMode", label: "Color Mode",
-                type: {
-                    id: "string"
-                }
-            },
-            {
-                id: "reachable", label: "Reachable",
-                type: {
-                    id: "boolean"
                 }
             }],
         configuration: [{
@@ -119,17 +53,7 @@ function LightBulb() {
 
         if (this.isSimulated()) {
             this.state = {
-                on: true,
-                brightness: 254,
-                hue: 34515,
-                saturation: 236,
-                x: 0.3138,
-                y: 0.3239,
-                colorTemperature: 153,
-                alert: "none",
-                effect: "none",
-                colorMode: "ct",
-                reachable: true
+                intensity: 0
             };
         }
         else {
@@ -154,17 +78,7 @@ function LightBulb() {
         }
         else {
             return {
-                on: this.lightState.on,
-                brightness: this.lightState.bright,
-                hue: this.lightState.hue,
-                saturation: this.lightState.sat,
-                x: this.lightState.xy[0],
-                y: this.lightState.xy[1],
-                colorTemperature: this.lightState.ct,
-                alert: this.lightState.alert,
-                effect: this.lightState.effect,
-                colorMode: this.lightState.colormode,
-                reachable: this.lightState.reachable
+                intensity: this.lightState.bright
             };
         }
     };
@@ -180,16 +94,7 @@ function LightBulb() {
         }
         else {
             this.device.hue.setLightState(this.configuration.id, {
-                on: state.on,
-                bright: state.brightness,
-                hue: state.hue,
-                sat: state.saturation,
-                xy: [state.x, state.y],
-                ct: state.colorTemperature,
-                alert: state.alert,
-                effect: state.effect,
-                colormode: state.colorMode,
-                reachable: state.reachable
+                bright: state.intensity
             }).then(function () {
                 this.publishStateChange();
             }.bind(this));
@@ -242,47 +147,16 @@ function LightBulb() {
     /**
      *
      */
-    LightBulb.prototype.hsl = function (parameters) {
+    LightBulb.prototype.changeIntensity = function (parameters) {
         if (this.isSimulated()) {
-            this.state.hue = parameters.hue;
-            this.state.saturation = parameters.saturation;
-            this.state.brightness = parameters.brightness;
+            this.state.intensity = parameters.intensity;
 
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.hsl(parameters.hue, parameters.saturation, parameters.brightness)).
-                then(function () {
-                    this.publishStateChange();
-                }.bind(this));
-        }
-    };
-
-    /**
-     *
-     */
-    LightBulb.prototype.shortAlert = function (parameters) {
-        if (this.isSimulated()) {
-            this.publishStateChange();
-        } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.shortAlert()).
-                then(function () {
-                    this.publishStateChange();
-                }.bind(this));
-        }
-    };
-
-
-    /**
-     *
-     */
-    LightBulb.prototype.longAlert = function (parameters) {
-        if (this.isSimulated()) {
-            this.publishStateChange();
-        } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.longAlert()).
-                then(function () {
-                    this.publishStateChange();
-                }.bind(this));
+            //this.device.hue.setLightState(this.configuration.id, this.lightState.hsl(parameters.hue, parameters.saturation, parameters.brightness)).
+            //    then(function () {
+            //        this.publishStateChange();
+            //    }.bind(this));
         }
     };
 };

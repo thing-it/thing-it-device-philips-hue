@@ -1,0 +1,46 @@
+<style>
+    .lightBulbColorPicker .colorpicker-saturation {
+        width: 200px;
+        height: 200px;
+    }
+
+    .lightBulbColorPicker .colorpicker-hue,
+    .lightBulbColorPicker .colorpicker-alpha {
+        width: 30px;
+        height: 200px;
+    }
+
+    .lightBulbColorPicker .colorpicker-color,
+    .lightBulbColorPicker .colorpicker-color div {
+        height: 30px;
+    }
+</style>
+<table class="formTable">
+    <tr style="vertical-align: middle">
+        <td>
+            <ti-switch ti-model="component._state.on"
+                       ti-change="panel.callActorService(component, 'toggle')"></ti-switch>
+        </td>
+        <td style="padding-left: 20px;">
+            <ti-color-picker style="width: 100px; height: 100px;"
+                             ng-model="component._state.hex"
+                             ti-options="{customClass: 'lightBulbColorPicker'}"></ti-color-picker>
+        </td>
+        <td style="padding-left: 20px; vertical-align: top;">
+            <table class="buttonGrid" >
+                <tr>
+                    <td>
+                        <div class="circleButton" ng-click="panel.callDeviceService(component, 'shortAlert')"><i
+                                class="fa fa-exclamation-circle"></i></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="circleButton" ng-click="panel.callDeviceService(component, 'longAlert')"><i
+                                class="fa fa-exclamation-triangle"></i></div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

@@ -3,7 +3,7 @@
 [![NPM](https://nodei.co/npm/thing-it-device-philips-hue.png)](https://nodei.co/npm/thing-it-device-philips-hue/)
 [![NPM](https://nodei.co/npm-dl/thing-it-device-philips-hue.png)](https://nodei.co/npm/thing-it-device-philips-hue/)
 
-[thing-it-node] Device Plugin for Philips Hue Bridge to control Philips Hue Light Bulbs and Philips Living Color Lamps.
+[thing-it-node] Device Plugin for Philips Hue Bridge to control Philips Hue Light Bulbs and Philips Hue Living Color Lamps.
 
 This allows you to 
 
