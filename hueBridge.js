@@ -60,6 +60,8 @@ function HueBridge() {
 
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
+            console.log("************ Hue retrieved");
+
             deferred.resolve();
         }
 

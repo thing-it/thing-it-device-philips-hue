@@ -53,7 +53,7 @@ function LightBulb() {
 
         if (this.isSimulated()) {
             this.state = {
-                intensity: 0
+                brightness: 0
             };
         }
         else {
@@ -62,6 +62,8 @@ function LightBulb() {
             }
 
             this.lightState = hue.lightState.create();
+
+            console.log("**************** lightstate", this.lightState);
         }
 
         deferred.resolve();
@@ -87,6 +89,7 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.setState = function (state) {
+        console.log("Set state ", state);
         if (this.isSimulated()) {
             this.state = state;
 
@@ -148,15 +151,6 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.changeBrightness = function (parameters) {
-        if (this.isSimulated()) {
-            this.state.brightness = parameters.brightness;
-
-            this.publishStateChange();
-        } else {
-            //this.device.hue.setLightState(this.configuration.id, this.lightState.hsl(parameters.hue, parameters.saturation, parameters.brightness)).
-            //    then(function () {
-            //        this.publishStateChange();
-            //    }.bind(this));
-        }
+        this.setState(parameters);
     };
 };
