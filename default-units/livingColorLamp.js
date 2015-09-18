@@ -106,6 +106,7 @@ module.exports = {
 };
 
 var q = require('q');
+var hue;
 
 /**
  *
