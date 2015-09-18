@@ -66,11 +66,11 @@ function LightBulb() {
                 .then(function (lightState) {
                     this.lightState = lightState;
                     console.log("**************** lightstate", this.lightState);
-                }).fail(function (error) {
+                }.bind(this)).fail(function (error) {
                     console.log("Error: ", error);
 
                     this.lightState = hue.lightState.create();
-                });
+                }.bind(this));
 
             deferred.resolve();
         }
