@@ -1,5 +1,5 @@
 <div style="padding: 1em;">
     <input ti-slider=""
            ti-model="component._state.brightness" ti-min="0" ti-max="100"
-           ti-change="panel.callDeviceService(component, 'changeBrightness', {brightness: component._state.brightness} )">
+           ti-change="panel.callActorService(component, 'changeBrightness', {brightness: component._state.brightness} )">
 </div>
