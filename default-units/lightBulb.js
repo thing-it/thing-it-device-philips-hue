@@ -97,9 +97,7 @@ function LightBulb() {
             this.publishStateChange();
         }
         else {
-            this.device.hueApi.setLightState(this.configuration.id, {
-                bright: state.brightness
-            }).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, this.lightState.on().brightness(state.brightness)).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
