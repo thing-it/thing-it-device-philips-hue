@@ -4,6 +4,7 @@ module.exports = {
         plugin: "hueBridge",
         label: "Philips Hue Bridge",
         manufacturer: "Philips",
+        discoverable: true,
         actorTypes: [],
         sensorTypes: [],
         services: [],
@@ -43,6 +44,44 @@ module.exports = {
 
 var q = require('q');
 var hue;
+
+function HueBridgeDiscovery() {
+    /**
+     *
+     * @param options
+     */
+    HueBridgeDiscovery.prototype.start = function () {
+        if (this.node.isSimulated()) {
+        } else {
+            if (!hue) {
+                hue = require("node-hue-api");
+            }
+
+            hue.nupnpSearch().then(function (bridges) {
+                for (var n in bridges) {
+                    hue.registerUser(bridges[n], "[thing-it] Node", "[thing-it] Node Default User")
+                        .then(function () {
+                            var hueBridge = new HueBridge();
+
+                            hueBridge.hueApi = hue.HueApi(bridges[n], "[thing-it] Node");
+                            hueBridge.id = bridges[n].id;
+
+                            break;
+                        }.bind(this))
+                        .fail(function () {
+                        }.bind(this));
+                }
+            }.bind(this)).fail();
+        }
+    };
+
+    /**
+     *
+     * @param options
+     */
+    HueBridgeDiscovery.prototype.stop = function () {
+    };
+}
 
 function HueBridge() {
     /**
