@@ -62,12 +62,19 @@ function LightBulb() {
                 hue = require('node-hue-api');
             }
 
-            this.lightState = hue.lightState.create();
+            this.device.hueApi.lightStatus(this.configuration.id)
+                .then(function (lightState) {
+                    this.lightState = lightState;
+                    console.log("**************** lightstate", this.lightState);
+                }).fail(function (error) {
+                    console.log("Error: ", error);
 
-            console.log("**************** lightstate", this.lightState);
+                    this.lightState = hue.lightState.create();
+                });
+
+            deferred.resolve();
         }
 
-        deferred.resolve();
 
         return deferred.promise;
     };
