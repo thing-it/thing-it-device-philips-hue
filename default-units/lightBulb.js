@@ -97,7 +97,7 @@ function LightBulb() {
             this.publishStateChange();
         }
         else {
-            this.device.hue.setLightState(this.configuration.id, {
+            this.device.hueApi.setLightState(this.configuration.id, {
                 bright: state.brightness
             }).then(function () {
                 this.publishStateChange();
@@ -114,7 +114,7 @@ function LightBulb() {
 
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, this.lightState.on()).then(function () {
                 this.publishStateChange();
             }.bind(this));
 
@@ -130,7 +130,7 @@ function LightBulb() {
 
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.off()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, this.lightState.off()).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
