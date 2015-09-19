@@ -23,19 +23,19 @@ autoDiscoveryDeviceTypes: [{
         plugin: "philips-hue/hueBridge",
         confirmRegistration: false,
         persistRegistration: false,
-        defaultConfiguration: { ...
+        defaultConfiguration: {
         },
         options: {}
     }]
 ```
 
-in your Node Configuration (e.g. like the [sample configuration]("./examples.configuration")) or enable Autodiscovery for the [thing-it-device-philips-hue] Device in your 
-[thing-it.com](http://www.thing-it.com) Mesh and start [thing-it] Node with even an empty configuration (besides the above).
+in your Node Configuration (e.g. the [sample configuration]("./examples.configuration")) or enable Autodiscovery for the [thing-it-device-philips-hue] Device in your 
+[thing-it.com](http://www.thing-it.com) Mesh and start [thing-it-node] with even an empty configuration (besides the above).
 
-Start [thing-it] Node, connect your Philips Hue Bridge to the same network as the [thing-it] Node Box and push the 
+Start [thing-it-node], connect your Philips Hue Bridge to the same network as the [thing-it-node] Box and push the 
 Link Button on the Philips Hue Bridge.
 
-[thing-it] Node will automatically add all Light Bulbs and Living Color Lamps to your [thing-it] Node Configuration and 
+[thing-it-node] will automatically add all Light Bulbs and Living Color Lamps to your [thing-it-node] Configuration and 
 you will be able control these from [thing-it] Mobile.
 
 ## Mobile UI
