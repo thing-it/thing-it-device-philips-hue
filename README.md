@@ -40,4 +40,4 @@ you will be able control these from [thing-it] Mobile.
 
 ## Mobile UI
 
-<p align="center"><a href="./documentation/images/mobile-ui.png"><img src="./documentation/images/mobile-client.png" width="70%" height="70%"></a></p>
+<p align="center"><a href="./documentation/images/mobile-ui.png"><img src="./documentation/images/mobile-ui.png" width="70%" height="70%"></a></p>
