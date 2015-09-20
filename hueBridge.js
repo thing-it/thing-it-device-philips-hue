@@ -70,8 +70,6 @@ function HueBridgeDiscovery() {
                     for (var n in bridges) {
                         var hueApi = new hue.HueApi(bridges[n].ipaddress);
 
-                        console.log("Attempt to create user for bridge ", bridges[n]);
-
                         hueApi.registerUser(bridges[n].ipaddress, "thing-it-"/* + new Date().getTime()*/, "[thing-it] Node Default User")
                             .then(function (user) {
                                 hueApi._config.username = user; // TODO Ugly/hack?
@@ -98,13 +96,10 @@ function HueBridgeDiscovery() {
                                         });
                                     }
 
-                                    console.log("Device", hueBridge);
-
                                     this.advertiseDevice(hueBridge);
                                 }.bind(this));
                             }.bind(this))
                             .fail(function (error) {
-                                console.error("Cannot create users: " + error);
                             }.bind(this));
 
                         break;
