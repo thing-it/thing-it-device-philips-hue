@@ -65,10 +65,7 @@ function LightBulb() {
             this.device.hueApi.lightStatus(this.configuration.id)
                 .then(function (lightState) {
                     this.lightState = lightState;
-                    console.log("**************** lightstate", this.lightState);
                 }.bind(this)).fail(function (error) {
-                    console.log("Error: ", error);
-
                     this.lightState = hue.lightState.create();
                 }.bind(this));
 
@@ -97,7 +94,6 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.setState = function (state) {
-        console.log("Set state ", state);
         if (this.isSimulated()) {
             this.state = state;
 
