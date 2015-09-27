@@ -15,41 +15,24 @@ module.exports = {
         logLevel: "debug",
         configuration: {host: "192.168.1.4", userName: "6a61bcc3553ea0f220fc7a4196781a7"},
         actors: [{
-            id: "lightBulbKitchenCounter",
-            label: "Light Bulb Kitchen Counter",
-            type: "lightBulb",
-            configuration: {
-                id: 1
-            }
-        }, {
-            id: "lightBulbCouch",
-            label: "Light Bulb Couch",
+            id: "lightBulbBedroom",
+            label: "Light Bulb Bedroom",
             type: "lightBulb",
             configuration: {
                 id: 2
-            }
+            },
+            logLevel: "debug"
         }, {
             id: "livingColorLampBar",
             label: "Living Color Lamp Bar",
             type: "livingColorLamp",
             configuration: {
                 id: 3
-            }
+            },
+            logLevel: "debug"
         }], sensors: []
     }],
-    groups: [{
-        id: "group1",
-        label: "Lounge",
-        icon: "icon sl-house-1",
-        devices: [],
-        actors: ["philipsHueBridge.lightBulbKitchenCounter", "philipsHueBridge.lightBulbCouch"]
-    }, {
-        id: "group2",
-        label: "Bar",
-        icon: "icon sl-cocktail-1",
-        devices: [],
-        actors: ["philipsHueBridge.livingColorLampBar"]
-    }],
+    groups: [],
     services: [{
         id: "blackout",
         label: "Blackout",

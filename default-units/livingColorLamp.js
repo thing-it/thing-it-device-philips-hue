@@ -44,6 +44,12 @@ module.exports = {
                 }
             },
             {
+                id: "brightnessPercent", label: "Brightness (%)",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
                 id: "hue", label: "Hue",
                 type: {
                     id: "integer"
@@ -124,27 +130,36 @@ function LivingColorLamp() {
     LivingColorLamp.prototype.start = function () {
         var deferred = q.defer();
 
-        if (this.isSimulated()) {
-            this.state = {
-                on: true,
-                brightness: 254,
-                hue: 34515,
-                saturation: 236,
-                x: 0.3138,
-                y: 0.3239,
-                colorTemperature: 153,
-                alert: "none",
-                effect: "none",
-                colorMode: "ct",
-                reachable: true
-            };
-        }
-        else {
+        this.logDebug("Starting Living Color Lamp", this.label);
+
+        this.state = {
+            on: true,
+            brightness: 254,
+            hue: 34515,
+            saturation: 236,
+            x: 0.3138,
+            y: 0.3239,
+            colorTemperature: 153,
+            alert: "none",
+            effect: "none",
+            colorMode: "ct",
+            reachable: true,
+            rgbHex: "#FFFFFF"
+        };
+
+        if (!this.isSimulated()) {
             if (!hue) {
                 hue = require('node-hue-api');
             }
 
-            this.lightState = hue.lightState.create();
+            this.interval = setInterval(function () {
+                this.device.hueApi.lightStatus(this.configuration.id)
+                    .then(function (lightState) {
+                        this.state.reachable = lightState.reachable;
+                    }.bind(this)).fail(function (error) {
+                        this.state.reachable = false;
+                    }.bind(this));
+            }.bind(this), 10000);
         }
 
         deferred.resolve();
@@ -155,43 +170,34 @@ function LivingColorLamp() {
     /**
      *
      */
-    LivingColorLamp.prototype.getState = function () {
-        if (this.isSimulated()) {
-            var rgb = hslToRgb(this.state.hue, this.state.saturation, this.state.brightness);
-
-            this.state.rgbHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
-        }
-        else {
-            var rgb = hslToRgb(this.lightState.hue, this.lightState.sat, this.lightState.bright);
-
-            return {
-                on: this.lightState.on,
-                brightness: this.lightState.bright,
-                hue: this.lightState.hue,
-                saturation: this.lightState.sat,
-                x: this.lightState.xy[0],
-                y: this.lightState.xy[1],
-                colorTemperature: this.lightState.ct,
-                alert: this.lightState.alert,
-                effect: this.lightState.effect,
-                colorMode: this.lightState.colormode,
-                reachable: this.lightState.reachable,
-                rgbHex: rgbToHex(rgb[0], rgb[1], rgb[2])
-            };
+    LivingColorLamp.prototype.stop = function () {
+        if (this.interval) {
+            clearInterval(this.interval);
         }
     };
 
     /**
      *
      */
-    LivingColorLamp.prototype.setState = function (state) {
-        if (this.isSimulated()) {
-            this.state = state;
+    LivingColorLamp.prototype.getState = function () {
+        var rgb = hslToRgb(this.state.hue, this.state.saturation, this.state.brightness);
 
+        this.state.rgbHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+
+        return this.state;
+    };
+
+    /**
+     *
+     */
+    LivingColorLamp.prototype.setState = function (state) {
+        this.state = state;
+
+        if (this.isSimulated()) {
             this.publishStateChange();
         }
         else {
-            this.device.hue.setLightState(this.configuration.id, {
+            this.device.hueApi.setLightState(this.configuration.id, {
                 on: state.on,
                 bright: state.brightness,
                 hue: state.hue,
@@ -212,15 +218,14 @@ function LivingColorLamp() {
      *
      */
     LivingColorLamp.prototype.on = function () {
-        if (this.isSimulated()) {
-            this.state.on = true;
+        this.state.on = true;
 
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on()).then(function () {
                 this.publishStateChange();
             }.bind(this));
-
         }
     };
 
@@ -228,12 +233,12 @@ function LivingColorLamp() {
      *
      */
     LivingColorLamp.prototype.off = function () {
-        if (this.isSimulated()) {
-            this.state.on = false;
+        this.state.on = false;
 
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on()).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
@@ -255,14 +260,14 @@ function LivingColorLamp() {
      *
      */
     LivingColorLamp.prototype.hsl = function (parameters) {
-        if (this.isSimulated()) {
-            this.state.hue = parameters.hue;
-            this.state.saturation = parameters.saturation;
-            this.state.brightness = parameters.brightness;
+        this.state.hue = parameters.hue;
+        this.state.saturation = parameters.saturation;
+        this.state.brightness = parameters.brightness;
 
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.hsl(parameters.hue, parameters.saturation, parameters.brightness)).
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().hsl(parameters.hue, parameters.saturation, parameters.brightness)).
                 then(function () {
                     this.publishStateChange();
                 }.bind(this));
@@ -276,7 +281,7 @@ function LivingColorLamp() {
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.shortAlert()).
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().shortAlert()).
                 then(function () {
                     this.publishStateChange();
                 }.bind(this));
@@ -291,7 +296,7 @@ function LivingColorLamp() {
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.longAlert()).
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().longAlert()).
                 then(function () {
                     this.publishStateChange();
                 }.bind(this));
@@ -301,13 +306,22 @@ function LivingColorLamp() {
     /**
      *
      */
-    LivingColorLamp.prototype.setBrightness = function (parameters) {
-        if (this.isSimulated()) {
-            this.state.brightness = parameters.brightness / 100 * 255; // TODO Correct?
+    LivingColorLamp.prototype.setBrightnessPercent = function (parameters) {
+        console.log(">>> Set brightness", parameters);
 
+        this.state.brightnessPercent = parameters.brightnessPercent;
+        this.state.brightness = Math.floor(parameters.brightnessPercent / 100);
+
+        var rgb = hslToRgb(this.state.hue, this.state.saturation, this.state.brightness);
+
+        this.state.rgbHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+
+        console.log(">>> Set brightness", this.state.brightnessPercent);
+
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.brightness(parameters.brightness)).
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().rgb(rgb[0], rgb[1], rgb[2])).
                 then(function () {
                     this.publishStateChange();
                 }.bind(this));
@@ -321,14 +335,15 @@ function LivingColorLamp() {
         var rgb = hexToRgb(parameters.rgbHex);
         var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
 
-        if (this.isSimulated()) {
-            this.state.hue = hsl[0];
-            this.state.saturation = hsl[1];
-            this.state.brightness = hsl[2];
+        this.state.hue = hsl[0];
+        this.state.saturation = hsl[1];
+        this.state.brightness = hsl[2];
+        this.state.brightnessPercent = Math.floor(this.state.brightness * 100);
 
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hue.setLightState(this.configuration.id, this.lightState.rgb(rgb.r, rgb.g, rgb.b)).
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().rgb(rgb.r, rgb.g, rgb.b)).
                 then(function () {
                     this.publishStateChange();
                 }.bind(this));

@@ -15,14 +15,25 @@ module.exports = {
             id: "toggle",
             label: "Toggle"
         }, {
-            id: "setBrightness",
-            label: "Set Brightness"
+            id: "setBrightnessPercentage",
+            label: "Set Brightness (%)"
         }],
         state: [
             {
                 id: "brightness", label: "Brightness",
                 type: {
                     id: "integer"
+                }
+            }, {
+                id: "brightnessPercentage", label: "Brightness (%)",
+                type: {
+                    id: "integer"
+                }
+            },
+            {
+                id: "reachable", label: "Reachable",
+                type: {
+                    id: "boolean"
                 }
             }],
         configuration: [{
@@ -52,22 +63,25 @@ function LightBulb() {
     LightBulb.prototype.start = function () {
         var deferred = q.defer();
 
-        if (this.isSimulated()) {
-            this.state = {
-                brightness: 0
-            };
-        }
-        else {
+        this.state = {
+            brightness: 0,
+            brightnessPercentage: 0,
+            reachable: false
+        };
+
+        if (!this.isSimulated()) {
             if (!hue) {
                 hue = require('node-hue-api');
             }
 
-            this.device.hueApi.lightStatus(this.configuration.id)
-                .then(function (lightState) {
-                    this.lightState = lightState;
-                }.bind(this)).fail(function (error) {
-                    this.lightState = hue.lightState.create();
-                }.bind(this));
+            this.interval = setInterval(function () {
+                this.device.hueApi.lightStatus(this.configuration.id)
+                    .then(function (lightState) {
+                        this.state.reachable = lightState.reachable;
+                    }.bind(this)).fail(function (error) {
+                        this.state.reachable = false;
+                    }.bind(this));
+            }.bind(this), 10000);
 
             deferred.resolve();
         }
@@ -80,29 +94,22 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.getState = function () {
-        if (this.isSimulated()) {
-            return this.state;
-        }
-        else {
-            return {
-                brightness: this.lightState.bright
-            };
-        }
+        return this.state;
     };
 
     /**
      *
      */
     LightBulb.prototype.setState = function (state) {
+        // TODO Needs work
+
+        this.state = state;
+
         if (this.isSimulated()) {
-            // TODO Merge state
-
-            this.state = state;
-
             this.publishStateChange();
         }
         else {
-            this.device.hueApi.setLightState(this.configuration.id, this.lightState.on().brightness(state.brightness)).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercentage)).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
@@ -112,12 +119,11 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.on = function () {
+        this.state.on = true;
         if (this.isSimulated()) {
-            this.state.on = true;
-
             this.publishStateChange();
         } else {
-            this.device.hueApi.setLightState(this.configuration.id, this.lightState.on()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on()).then(function () {
                 this.publishStateChange();
             }.bind(this));
 
@@ -128,12 +134,12 @@ function LightBulb() {
      *
      */
     LightBulb.prototype.off = function () {
-        if (this.isSimulated()) {
-            this.state.on = false;
+        this.state.on = false;
 
+        if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hueApi.setLightState(this.configuration.id, this.lightState.off()).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().off()).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
@@ -154,7 +160,16 @@ function LightBulb() {
     /**
      *
      */
-    LightBulb.prototype.setBrightness = function (parameters) {
-        this.setState(parameters);
+    LightBulb.prototype.setBrightnessPercentage = function (parameters) {
+        this.state.brightnessPercentage = parameters.brightnessPercentage;
+        this.state.brightness = parameters.brightnessPercentage / 100;
+
+        if (this.isSimulated()) {
+            this.publishStateChange();
+        } else {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercentage)).then(function () {
+                this.publishStateChange();
+            }.bind(this));
+        }
     };
 };
