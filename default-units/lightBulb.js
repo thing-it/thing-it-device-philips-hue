@@ -15,8 +15,8 @@ module.exports = {
             id: "toggle",
             label: "Toggle"
         }, {
-            id: "changeBrightness",
-            label: "Change Brightness"
+            id: "setBrightness",
+            label: "Set Brightness"
         }],
         state: [
             {
@@ -95,6 +95,8 @@ function LightBulb() {
      */
     LightBulb.prototype.setState = function (state) {
         if (this.isSimulated()) {
+            // TODO Merge state
+
             this.state = state;
 
             this.publishStateChange();
@@ -152,7 +154,7 @@ function LightBulb() {
     /**
      *
      */
-    LightBulb.prototype.changeBrightness = function (parameters) {
+    LightBulb.prototype.setBrightness = function (parameters) {
         this.setState(parameters);
     };
 };

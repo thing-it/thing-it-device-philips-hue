@@ -65,25 +65,33 @@ function HueBridgeDiscovery() {
                 hue = require("node-hue-api");
             }
 
+            // TODO For now, need to be able to switch for Discovery or inherit from Device
+
+            this.logLevel = "debug";
+
+            var discovery = this;
+
             this.timer = setInterval(function () {
                 hue.nupnpSearch().then(function (bridges) {
                     for (var n in bridges) {
-                        var hueApi = new hue.HueApi(bridges[n].ipaddress);
-
-                        hueApi.registerUser(bridges[n].ipaddress, "thing-it-"/* + new Date().getTime()*/, "[thing-it] Node Default User")
+                        new hue.HueApi(bridges[n].ipaddress).registerUser(bridges[n].ipaddress, "thing-it", "[thing-it] Node Default User")
                             .then(function (user) {
-                                hueApi._config.username = user; // TODO Ugly/hack?
+                                this._config.username = user; // Could call constructor again, but it does the same
 
-                                hueApi.fullState().then(function (bridge) {
+                                discovery.logDebug("Hue API", this);
+
+                                this.fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
-                                    hueBridge.configuration = this.defaultConfiguration;
-                                    hueBridge.configuration.host = bridge.config.ipaddress;
-                                    hueBridge.configuration.userName = user;
-                                    hueBridge.hueApi = hueApi;
+                                    hueBridge.configuration = discovery.defaultConfiguration;
+                                    hueBridge.configuration.host = this.hostname;
+                                    hueBridge.configuration.userName = this.username;
+                                    hueBridge.hueApi = this;
                                     hueBridge.uuid = bridge.config.mac;
 
-                                    // TODO Inherit structure from Device
+                                    discovery.logDebug("Initial Bridge", hueBridge);
+
+                                    // TODO Inherit structure from Device. Where is the device bound?
 
                                     hueBridge.actors = [];
 
@@ -96,16 +104,20 @@ function HueBridgeDiscovery() {
                                         });
                                     }
 
-                                    this.advertiseDevice(hueBridge);
-                                }.bind(this));
-                            }.bind(this))
+                                    discovery.logDebug("Bridge with lights", hueBridge);
+
+                                    discovery.advertiseDevice(hueBridge);
+                                }).fail(function (error) {
+                                    discovery.logError(error);
+                                });
+                            })
                             .fail(function (error) {
-                            }.bind(this));
-
-                        break;
+                                discovery.logError(error);
+                            });
                     }
-
-                }.bind(this)).fail();
+                }.bind(this)).fail(function (error) {
+                    discovery.logError(error);
+                });
             }.bind(this), 10000);
         }
     };
@@ -140,6 +152,8 @@ function HueBridge() {
             }
 
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
+
+            this.logDebug("Hue API", this.hueApi);
 
             deferred.resolve();
         }
