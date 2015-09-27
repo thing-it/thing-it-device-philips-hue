@@ -14,7 +14,7 @@ module.exports = {
         id: "philipsHueBridge",
         plugin: "philips-hue/hueBridge",
         logLevel: "debug",
-        configuration: {host: "192.168.1.4", userName: "2752a546106c35443652a19216b6953f"},
+        configuration: {host: "192.168.1.4", userName: "6a61bcc3553ea0f220fc7a4196781a7"},
         actors: [{
             id: "lightBulbKitchenCounter",
             label: "Light Bulb Kitchen Counter",
@@ -29,6 +29,13 @@ module.exports = {
             configuration: {
                 id: 2
             }
+        }, , {
+            id: "livingColorLampBar",
+            label: "Living Color Lamp Bar",
+            type: "livingColorLamp",
+            configuration: {
+                id: 3
+            }
         }], sensors: []
     }],
     groups: [{
@@ -36,7 +43,13 @@ module.exports = {
         label: "Lounge",
         icon: "icon sl-house-1",
         devices: [],
-        actors: ["philipsHueBridge.lightBulbCouch"]
+        actors: ["philipsHueBridge.lightBulbKitchenCounter", "philipsHueBridge.lightBulbCouch"]
+    }, {
+        id: "group2",
+        label: "Bar",
+        icon: "icon sl-cocktail-1",
+        devices: [],
+        actors: ["philipsHueBridge.livingColorLampBar"]
     }],
     services: [{
         id: "blackout",
