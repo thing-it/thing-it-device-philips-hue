@@ -5,8 +5,7 @@ module.exports = {
         plugin: "philips-hue/hueBridge",
         confirmRegistration: true,
         persistRegistration: false,
-        defaultConfiguration: {
-        },
+        defaultConfiguration: {},
         options: {}
     }],
     devices: [{
@@ -29,7 +28,7 @@ module.exports = {
             configuration: {
                 id: 2
             }
-        }, , {
+        }, {
             id: "livingColorLampBar",
             label: "Living Color Lamp Bar",
             type: "livingColorLamp",
