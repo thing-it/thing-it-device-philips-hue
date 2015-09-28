@@ -82,10 +82,9 @@ function LightBulb() {
                         this.state.reachable = false;
                     }.bind(this));
             }.bind(this), 10000);
-
-            deferred.resolve();
         }
 
+        deferred.resolve();
 
         return deferred.promise;
     };
@@ -103,7 +102,11 @@ function LightBulb() {
     LightBulb.prototype.setState = function (state) {
         // TODO Needs work
 
-        this.state = state;
+        this.state = {
+            brightness: state.brightness ? state.brightness : this.state.brightness,
+            brightnessPercentage: state.brightnessPercentage ? state.brightnessPercentage : this.state.brightnessPercentage,
+            rgbHex: state.rgbHex ? state.rgbHex : this.state.rgbHex
+        };
 
         if (this.isSimulated()) {
             this.publishStateChange();

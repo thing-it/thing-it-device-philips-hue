@@ -130,8 +130,6 @@ function LivingColorLamp() {
     LivingColorLamp.prototype.start = function () {
         var deferred = q.defer();
 
-        this.logDebug("Starting Living Color Lamp", this.label);
-
         this.state = {
             on: true,
             brightness: 254,
@@ -191,23 +189,37 @@ function LivingColorLamp() {
      *
      */
     LivingColorLamp.prototype.setState = function (state) {
-        this.state = state;
+        this.state = {
+            on: state.on ? state.on : this.state.on,
+            brightness: state.brightness ? state.brightness : this.state.brightness,
+            brightnessPercentage: state.brightnessPercentage ? state.brightnessPercentage : this.state.brightnessPercentage,
+            hue: state.hue ? state.hue : this.state.hue,
+            saturation: state.saturation ? state.saturation : this.state.saturation,
+            x: state.x ? state.x : this.state.x,
+            y: state.y ? state.y : this.state.y,
+            colorTemperature: state.colorTemperature ? state.colorTemperature : this.state.colorTemperature,
+            alert: state.alert ? state.alert : this.state.alert,
+            effect: state.effect ? state.effect : this.state.effect,
+            colorMode: state.colorMode ? state.colorMode : this.state.colorMode,
+            reachable: state.reachable ? state.reachable : this.state.reachable,
+            rgbHex: state.rgbHex ? state.rgbHex : this.state.rgbHex
+        };
 
         if (this.isSimulated()) {
             this.publishStateChange();
         }
         else {
             this.device.hueApi.setLightState(this.configuration.id, {
-                on: state.on,
-                bright: state.brightness,
-                hue: state.hue,
-                sat: state.saturation,
-                xy: [state.x, state.y],
-                ct: state.colorTemperature,
-                alert: state.alert,
-                effect: state.effect,
-                colormode: state.colorMode,
-                reachable: state.reachable
+                on: this.state.on,
+                bright: this.state.brightness,
+                hue: this.state.hue,
+                sat: this.state.saturation,
+                xy: [this.state.x, this.state.y],
+                ct: this.state.colorTemperature,
+                alert: this.state.alert,
+                effect: this.state.effect,
+                colormode: this.state.colorMode,
+                reachable: this.state.reachable
             }).then(function () {
                 this.publishStateChange();
             }.bind(this));
