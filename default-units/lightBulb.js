@@ -15,7 +15,7 @@ module.exports = {
             id: "toggle",
             label: "Toggle"
         }, {
-            id: "setBrightnessPercentage",
+            id: "setBrightnessPercent",
             label: "Set Brightness (%)"
         }],
         state: [
@@ -25,7 +25,7 @@ module.exports = {
                     id: "integer"
                 }
             }, {
-                id: "brightnessPercentage", label: "Brightness (%)",
+                id: "brightnessPercent", label: "Brightness (%)",
                 type: {
                     id: "integer"
                 }
@@ -65,7 +65,7 @@ function LightBulb() {
 
         this.state = {
             brightness: 0,
-            brightnessPercentage: 0,
+            brightnessPercent: 0,
             reachable: false
         };
 
@@ -92,6 +92,21 @@ function LightBulb() {
     /**
      *
      */
+    LightBulb.prototype.stop = function () {
+        var deferred = q.defer();
+
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+
+        deferred.resolve();
+
+        return deferred.promise;
+    };
+
+    /**
+     *
+     */
     LightBulb.prototype.getState = function () {
         return this.state;
     };
@@ -104,7 +119,7 @@ function LightBulb() {
 
         this.state = {
             brightness: state.brightness ? state.brightness : this.state.brightness,
-            brightnessPercentage: state.brightnessPercentage ? state.brightnessPercentage : this.state.brightnessPercentage,
+            brightnessPercent: state.brightnessPercent ? state.brightnessPercent : this.state.brightnessPercent,
             rgbHex: state.rgbHex ? state.rgbHex : this.state.rgbHex
         };
 
@@ -112,7 +127,7 @@ function LightBulb() {
             this.publishStateChange();
         }
         else {
-            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercentage)).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercent)).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }
@@ -163,14 +178,14 @@ function LightBulb() {
     /**
      *
      */
-    LightBulb.prototype.setBrightnessPercentage = function (parameters) {
-        this.state.brightnessPercentage = parameters.brightnessPercentage;
-        this.state.brightness = parameters.brightnessPercentage / 100;
+    LightBulb.prototype.setBrightnessPercent = function (parameters) {
+        this.state.brightnessPercent = parameters.brightnessPercent;
+        this.state.brightness = parameters.brightnessPercent / 100;
 
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercentage)).then(function () {
+            this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercent)).then(function () {
                 this.publishStateChange();
             }.bind(this));
         }

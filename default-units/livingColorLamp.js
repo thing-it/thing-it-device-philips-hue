@@ -169,9 +169,15 @@ function LivingColorLamp() {
      *
      */
     LivingColorLamp.prototype.stop = function () {
+        var deferred = q.defer();
+
         if (this.interval) {
             clearInterval(this.interval);
         }
+
+        deferred.resolve();
+
+        return deferred.promise;
     };
 
     /**
@@ -192,7 +198,7 @@ function LivingColorLamp() {
         this.state = {
             on: state.on ? state.on : this.state.on,
             brightness: state.brightness ? state.brightness : this.state.brightness,
-            brightnessPercentage: state.brightnessPercentage ? state.brightnessPercentage : this.state.brightnessPercentage,
+            brightnessPercent: state.brightnessPercent ? state.brightnessPercent : this.state.brightnessPercent,
             hue: state.hue ? state.hue : this.state.hue,
             saturation: state.saturation ? state.saturation : this.state.saturation,
             x: state.x ? state.x : this.state.x,

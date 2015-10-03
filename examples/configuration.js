@@ -12,7 +12,6 @@ module.exports = {
         label: "Philips Hue Bridge",
         id: "philipsHueBridge",
         plugin: "philips-hue/hueBridge",
-        logLevel: "debug",
         configuration: {host: "192.168.1.4", userName: "6a61bcc3553ea0f220fc7a4196781a7"},
         actors: [{
             id: "lightBulbBedroom",
@@ -20,8 +19,7 @@ module.exports = {
             type: "lightBulb",
             configuration: {
                 id: 2
-            },
-            logLevel: "debug"
+            }
         }, {
             id: "livingColorLampBar",
             label: "Living Color Lamp Bar",
@@ -29,8 +27,8 @@ module.exports = {
             configuration: {
                 id: 3
             },
-            logLevel: "debug"
-        }], sensors: []
+        }],
+        sensors: []
     }],
     groups: [],
     services: [{

@@ -164,6 +164,17 @@ function HueBridge() {
     /**
      *
      */
+    HueBridge.prototype.stop = function () {
+        var deferred = q.defer();
+
+        deferred.resolve();
+
+        return deferred.promise;
+    };
+
+    /**
+     *
+     */
     HueBridge.prototype.getState = function () {
         return {};
     };
