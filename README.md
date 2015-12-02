@@ -26,9 +26,9 @@ npm install -g thing-it-node
  
 ### Initialization and Start of [thing-it-node] 
 
-The **[thing-it-device-philips-hue]** Plugin is installed with **[thing-it-node]** hence there is no need to install it separately.
+The **[thing-it-device-philips-hue]** Plugin is installed with **[thing-it-node]**, hence there is no need to install it separately.
 
-The Plugin supports Autodiscovery hence you only have to create a directory in which you intend to run the configuration, e.g.
+The Plugin supports Autodiscovery, hence you only have to create a directory in which you intend to run the configuration, e.g.
  
 ```
 mkdir ~/hue-test
@@ -41,7 +41,7 @@ and invoke
 tin init
 ```
 
-Then start **[thing-it-node]** via
+and then start **[thing-it-node]** via
 
 ```
 tin run
@@ -53,7 +53,8 @@ locally as described [here](https://thing-it.com/public/documentation) or just c
  
 ### Philips Hue Setup
 
-Connect your Philips Hue Bridge to the same network as the [thing-it-node] Node Box and install all lighting.
+Connect your Philips Hue Bridge to the same network as the [thing-it-node] Node Box you have configured above 
+and install all lighting.
 
 Then push the **Link** Button on the Philips Hue Bridge.
 
