@@ -60,6 +60,26 @@ function HueBridgeDiscovery() {
      */
     HueBridgeDiscovery.prototype.start = function () {
         if (this.node.isSimulated()) {
+            this.timer = setInterval(function () {
+                var hueBridge = new HueBridge();
+
+                hueBridge.configuration = discovery.defaultConfiguration;
+                hueBridge.configuration.host = test;
+                hueBridge.configuration.userName = test;
+                hueBridge.uuid = "09-99-23-56-78";
+
+                hueBridge.actors = [];
+
+                hueBridge.actors.push({
+                    id: "lightBulb1", name: "Light Bulb 1", type: "lightBulb",
+                    configuration: {
+                        id: 1
+                    }
+                });
+
+                discovery.advertiseDevice(hueBridge);
+
+            }, 20000);
         } else {
             if (!hue) {
                 hue = require("node-hue-api");
