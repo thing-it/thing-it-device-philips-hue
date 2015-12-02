@@ -58,7 +58,7 @@ and install all lighting.
 
 Then push the **Link** Button on the Philips Hue Bridge.
 
-On the **[thing-it] Mobile App** or browser, confirm the registration of the Philips Hue Bridge.
+On the **[thing-it] Mobile App** or in the browser, confirm the registration of the Philips Hue Bridge.
 
 **[thing-it-node]** will automatically add all Light Bulbs and Living Color Lamps to your **[thing-it-node]** Configuration and 
 you will be able control these from the **[thing-it] Mobile App** immediately.
