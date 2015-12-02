@@ -16,9 +16,9 @@ by means of [thing-it-node](https://github.com/marcgille/thing-it-node) and [thi
 
 ### Installation of NodeJS and [thing-it-node]
 
-Install [nodejs](https://nodejs.org/en/download/) on your computer (e.g. your PC or your Raspberry Pi).
+First, install [nodejs](https://nodejs.org/en/download/) on your computer (e.g. your PC or your Raspberry Pi).
 
-Install **[thing-it-node]** via
+Then install **[thing-it-node]** via
 
 ```
 npm install -g thing-it-node
@@ -26,7 +26,7 @@ npm install -g thing-it-node
  
 ### Initialization and Start of [thing-it-node] 
 
-The **[thing-it-device-philips-hue]* Plugin is installed with **[thing-it-node]** hence there is no need to install it separately.
+The **[thing-it-device-philips-hue]** Plugin is installed with **[thing-it-node]** hence there is no need to install it separately.
 
 The Plugin supports Autodiscovery hence you only have to create a directory in which you intend to run the configuration, e.g.
  
