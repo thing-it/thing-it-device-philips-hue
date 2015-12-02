@@ -78,7 +78,6 @@ function HueBridgeDiscovery() {
                 });
 
                 discovery.advertiseDevice(hueBridge);
-
             }, 20000);
         } else {
             if (!hue) {
