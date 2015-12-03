@@ -64,8 +64,8 @@ function HueBridgeDiscovery() {
                 var hueBridge = new HueBridge();
 
                 hueBridge.configuration = this.defaultConfiguration;
-                hueBridge.configuration.host = test;
-                hueBridge.configuration.userName = test;
+                hueBridge.configuration.host = "test";
+                hueBridge.configuration.userName = "test";
                 hueBridge.uuid = "09-99-23-56-78";
 
                 hueBridge.actors = [];
