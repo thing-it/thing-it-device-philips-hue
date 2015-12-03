@@ -80,7 +80,7 @@ function HueBridgeDiscovery() {
                 this.logDebug("Bridge with lights", hueBridge);
 
                 this.advertiseDevice(hueBridge);
-            }, 20000);
+            }.bind(this), 20000);
         } else {
             if (!hue) {
                 hue = require("node-hue-api");
