@@ -63,7 +63,7 @@ function HueBridgeDiscovery() {
             this.timer = setInterval(function () {
                 var hueBridge = new HueBridge();
 
-                hueBridge.configuration = discovery.defaultConfiguration;
+                hueBridge.configuration = this.defaultConfiguration;
                 hueBridge.configuration.host = test;
                 hueBridge.configuration.userName = test;
                 hueBridge.uuid = "09-99-23-56-78";
@@ -77,7 +77,9 @@ function HueBridgeDiscovery() {
                     }
                 });
 
-                discovery.advertiseDevice(hueBridge);
+                this.logDebug("Bridge with lights", hueBridge);
+
+                this.advertiseDevice(hueBridge);
             }, 20000);
         } else {
             if (!hue) {
