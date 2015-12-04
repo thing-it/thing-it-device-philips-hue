@@ -95,7 +95,7 @@ function HueBridgeDiscovery() {
                     for (var n in bridges) {
                         new hue.HueApi(bridges[n].ipaddress).registerUser(bridges[n].ipaddress, "thing-it", "[thing-it] Node Default User")
                             .then(function (user) {
-                                this.logDebug("Hue API", this);
+                                this.logDebug("Hue API", user);
 
                                 new hue.HueApi(bridges[n].ipaddress, "thing-it").fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
