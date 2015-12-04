@@ -108,7 +108,7 @@ function HueBridgeDiscovery() {
                                     hueBridge.hueApi = this;
                                     hueBridge.uuid = bridge.config.mac;
 
-                                    discovery.logDebug("Initial Bridge", hueBridge);
+                                    this.logDebug("Initial Bridge", hueBridge);
 
                                     // TODO Inherit structure from Device. Where is the device bound?
 
