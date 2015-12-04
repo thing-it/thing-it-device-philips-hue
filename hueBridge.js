@@ -120,7 +120,7 @@ function HueBridgeDiscovery() {
                                                 }
                                             });
                                         }
-                                        else if (bridge.lights[n].type === "Extended color light'") {
+                                        else if (bridge.lights[n].type === "Extended color light") {
                                             hueBridge.actors.push({
                                                 id: "light" + n, label: bridge.lights[n].name, type: "livingColorLamp",
                                                 configuration: {
