@@ -97,37 +97,49 @@ function HueBridgeDiscovery() {
                             .then(function (user) {
                                 this.logDebug("Hue API", user);
 
+                                var discovery = this;
+
                                 new hue.HueApi(bridges[n].ipaddress, user).fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
-                                    this.logDebug("Bridge", bridge);
+                                    discovery.logDebug("Bridge", bridge);
 
-                                    hueBridge.configuration = this.defaultConfiguration;
-                                    hueBridge.configuration.host = bridges[n].ipaddress;
-                                    hueBridge.configuration.userName = "thing-it";
+                                    hueBridge.configuration = discovery.defaultConfiguration;
+                                    hueBridge.configuration.host = bridge.config.ipaddress;
+                                    hueBridge.configuration.userName = user;
                                     hueBridge.hueApi = this;
                                     hueBridge.uuid = bridge.config.mac;
 
-                                    this.logDebug("Initial Bridge", hueBridge);
+                                    discovery.logDebug("Initial Bridge", hueBridge);
 
                                     // TODO Inherit structure from Device. Where is the device bound?
 
                                     hueBridge.actors = [];
 
                                     for (var n in bridge.lights) {
-                                        hueBridge.actors.push({
-                                            id: "light" + n, name: bridge.lights[n].name, type: "lightBulb",
-                                            configuration: {
-                                                id: n
-                                            }
-                                        });
+                                        if (bridge.lights[n].type === "Dimmable light") {
+                                            hueBridge.actors.push({
+                                                id: "light" + n, name: bridge.lights[n].name, type: "lightBulb",
+                                                configuration: {
+                                                    id: n
+                                                }
+                                            });
+                                        }
+                                        else if (bridge.lights[n].type === "Extended color light'") {
+                                            hueBridge.actors.push({
+                                                id: "light" + n, name: bridge.lights[n].name, type: "livingColorLamp",
+                                                configuration: {
+                                                    id: n
+                                                }
+                                            });
+                                        }
                                     }
 
-                                    this.logDebug("Bridge with lights", hueBridge);
-                                    this.advertiseDevice(hueBridge);
-                                }.bind(this)).fail(function (error) {
-                                    this.logError(error);
-                                }.bind(this));
+                                    discovery.logDebug("Bridge with lights", hueBridge);
+                                    discovery.advertiseDevice(hueBridge);
+                                }).fail(function (error) {
+                                    discovery.logError(error);
+                                });
                             }.bind(this))
                             .fail(function (error) {
                                 this.logError(error);
