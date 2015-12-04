@@ -97,20 +97,13 @@ function HueBridgeDiscovery() {
                             .then(function (user) {
                                 this.logDebug("Hue API", user);
 
-                                var discovery = this;
-
                                 new hue.HueApi(bridges[n].ipaddress, user).fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
-                                    discovery.logDebug("Bridge", bridge);
-
-                                    hueBridge.configuration = discovery.defaultConfiguration;
+                                    hueBridge.configuration = this.defaultConfiguration;
                                     hueBridge.configuration.host = bridge.config.ipaddress;
                                     hueBridge.configuration.userName = user;
-                                    hueBridge.hueApi = this;
                                     hueBridge.uuid = bridge.config.mac;
-
-                                    discovery.logDebug("Initial Bridge", hueBridge);
 
                                     // TODO Inherit structure from Device. Where is the device bound?
 
@@ -135,11 +128,11 @@ function HueBridgeDiscovery() {
                                         }
                                     }
 
-                                    discovery.logDebug("Bridge with lights", hueBridge);
-                                    discovery.advertiseDevice(hueBridge);
-                                }).fail(function (error) {
-                                    discovery.logError(error);
-                                });
+                                    this.logDebug("Bridge with lights", hueBridge);
+                                    this.advertiseDevice(hueBridge);
+                                }.bind(this)).fail(function (error) {
+                                    this.logError(error);
+                                }.bind(this));
                             }.bind(this))
                             .fail(function (error) {
                                 this.logError(error);
