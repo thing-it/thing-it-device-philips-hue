@@ -97,7 +97,7 @@ function HueBridgeDiscovery() {
                             .then(function (user) {
                                 this.logDebug("Hue API", user);
 
-                                new hue.HueApi(bridges[n].ipaddress, "thing-it").fullState().then(function (bridge) {
+                                new hue.HueApi(bridges[n].ipaddress, user).fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
                                     this.logDebug("Bridge", bridge);
