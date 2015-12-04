@@ -71,7 +71,7 @@ function HueBridgeDiscovery() {
                 hueBridge.actors = [];
 
                 hueBridge.actors.push({
-                    id: "lightBulb1", name: "Light Bulb 1", type: "lightBulb",
+                    id: "lightBulb1", label: "Light Bulb 1", type: "lightBulb",
                     configuration: {
                         id: 1
                     }
