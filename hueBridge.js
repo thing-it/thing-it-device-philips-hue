@@ -95,12 +95,12 @@ function HueBridgeDiscovery() {
                     for (var n in bridges) {
                         new hue.HueApi(bridges[n].ipaddress).registerUser(bridges[n].ipaddress, "thing-it", "[thing-it] Node Default User")
                             .then(function (user) {
-                                discovery.logDebug("Hue API", this);
+                                this.logDebug("Hue API", this);
 
                                 new hue.HueApi(bridges[n].ipaddress, "thing-it").fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
-                                    discovery.logDebug("Bridge", bridge);
+                                    this.logDebug("Bridge", bridge);
 
                                     hueBridge.configuration = this.defaultConfiguration;
                                     hueBridge.configuration.host = bridges[n].ipaddress;
