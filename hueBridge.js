@@ -98,6 +98,8 @@ function HueBridgeDiscovery() {
                                 this.logDebug("Hue API", user);
 
                                 new hue.HueApi(bridges[n].ipaddress, user).fullState().then(function (bridge) {
+                                    this.logDebug("Bridge", bridge);
+
                                     var hueBridge = new HueBridge();
 
                                     hueBridge.configuration = this.defaultConfiguration;
@@ -112,7 +114,7 @@ function HueBridgeDiscovery() {
                                     for (var n in bridge.lights) {
                                         if (bridge.lights[n].type === "Dimmable light") {
                                             hueBridge.actors.push({
-                                                id: "light" + n, name: bridge.lights[n].name, type: "lightBulb",
+                                                id: "light" + n, label: bridge.lights[n].name, type: "lightBulb",
                                                 configuration: {
                                                     id: n
                                                 }
@@ -120,7 +122,7 @@ function HueBridgeDiscovery() {
                                         }
                                         else if (bridge.lights[n].type === "Extended color light'") {
                                             hueBridge.actors.push({
-                                                id: "light" + n, name: bridge.lights[n].name, type: "livingColorLamp",
+                                                id: "light" + n, label: bridge.lights[n].name, type: "livingColorLamp",
                                                 configuration: {
                                                     id: n
                                                 }
