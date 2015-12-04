@@ -90,23 +90,21 @@ function HueBridgeDiscovery() {
 
             this.logLevel = "debug";
 
-            var discovery = this;
-
             this.timer = setInterval(function () {
                 hue.nupnpSearch().then(function (bridges) {
                     for (var n in bridges) {
                         new hue.HueApi(bridges[n].ipaddress).registerUser(bridges[n].ipaddress, "thing-it", "[thing-it] Node Default User")
                             .then(function (user) {
-                                this._config.username = user; // Could call constructor again, but it does the same
-
                                 discovery.logDebug("Hue API", this);
 
-                                this.fullState().then(function (bridge) {
+                                new hue.HueApi(bridges[n].ipaddress, "thing-it").fullState().then(function (bridge) {
                                     var hueBridge = new HueBridge();
 
-                                    hueBridge.configuration = discovery.defaultConfiguration;
-                                    hueBridge.configuration.host = this.hostname;
-                                    hueBridge.configuration.userName = this.username;
+                                    discovery.logDebug("Bridge", bridge);
+
+                                    hueBridge.configuration = this.defaultConfiguration;
+                                    hueBridge.configuration.host = bridges[n].ipaddress;
+                                    hueBridge.configuration.userName = "thing-it";
                                     hueBridge.hueApi = this;
                                     hueBridge.uuid = bridge.config.mac;
 
@@ -125,19 +123,18 @@ function HueBridgeDiscovery() {
                                         });
                                     }
 
-                                    discovery.logDebug("Bridge with lights", hueBridge);
-
-                                    discovery.advertiseDevice(hueBridge);
-                                }).fail(function (error) {
-                                    discovery.logError(error);
-                                });
-                            })
+                                    this.logDebug("Bridge with lights", hueBridge);
+                                    this.advertiseDevice(hueBridge);
+                                }.bind(this)).fail(function (error) {
+                                    this.logError(error);
+                                }.bind(this));
+                            }.bind(this))
                             .fail(function (error) {
-                                discovery.logError(error);
-                            });
+                                this.logError(error);
+                            }.bind(this));
                     }
                 }.bind(this)).fail(function (error) {
-                    discovery.logError(error);
+                    this.logError(error);
                 });
             }.bind(this), 10000);
         }
