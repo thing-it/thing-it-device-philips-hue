@@ -28,7 +28,7 @@ module.exports = {
                 id: "integer"
             },
             default: "8080"
-        }, , {
+        }, {
             id: "timeout",
             label: "Timeout",
             type: {
@@ -43,7 +43,6 @@ module.exports = {
     discovery: function () {
         return new HueBridgeDiscovery();
     }
-
 };
 
 var q = require('q');
