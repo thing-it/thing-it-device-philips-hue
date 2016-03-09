@@ -1,6 +1,6 @@
 {
   "name": "thing-it-device-philips-hue",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "[thing-it-node] Device Plugin for Philips Hue Bridge to control Philips Hue Light Bulbs and Philips Living Color Lamps.",
   "authors": "Marc Gille, Klaus Berberich",
   "license": "MIT, EPL",
@@ -16,7 +16,7 @@
     "url": "https://github.com/marcgille/thing-it-device-philips-hue"
   },
   "dependencies": {
-    "node-hue-api": "^2.2.0"
+    "node-hue-api": "2.2.0"
   },
   "devDependencies": {
     "thing-it-test": "0.0.13"
