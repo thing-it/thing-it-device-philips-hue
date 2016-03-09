@@ -1,5 +1,9 @@
 <table class="formTable" style="width: 100%;">
-    <tr>
+    <tr align="left">
+        <td align="left" style="text-align: right !important;">
+            <ti-switch ti-model="component._state.on"
+                       ti-change="panel.callActorService(component, 'toggle')"></ti-switch>
+        </td>
         <td style="text-align: right !important;">
             <ti-color-picker style="width: 2em; height: 2em;"
                              ng-model="component._state.rgbHex"
@@ -8,7 +12,7 @@
         </td>
     </tr>
     <tr>
-        <td><input ti-slider=""
+        <td colspan="2"><input ti-slider=""
                    ti-model="component._state.brightnessPercent" ti-min="0" ti-max="100"
                    ti-change="panel.callActorService(component, 'setBrightnessPercent', {brightnessPercent: component._state.brightnessPercent})">
         </td>
