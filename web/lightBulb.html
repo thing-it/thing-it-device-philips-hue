@@ -1,5 +1,4 @@
-<div style="padding: 1em;">
-    <input ti-slider=""
-           ti-model="component._state.brightnessPercent" ti-min="0" ti-max="100"
-           ti-change="panel.callActorService(component, 'setBrightnessPercent', {brightnessPercent: component._state.brightnessPercent} )">
-</div>
+    <ti-light [state]="component._state"
+              (change)="callActorService(dimmer, 'setState', component._state)"
+              (toggle)="callActorService(dimmer, 'toggle', $event)"
+              [options]="{fieldMappings: {switch: 'pseudoSwitch'}, lightState: true, dimmer: true, scene: false}"></ti-light>
