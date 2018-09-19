@@ -29,7 +29,7 @@ module.exports = {
             }
         }, {
             label: "Selected Scene",
-            id: "selesctedScene",
+            id: "selectedScene",
             type: {
                 id: "any"
             }
@@ -134,7 +134,6 @@ function Scene(){
      */
     Scene.prototype.on = function () {
         this.state.sceneActive = true;
-        var sceneId;
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
