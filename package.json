@@ -19,6 +19,9 @@
     "node-hue-api": "2.2.0"
   },
   "devDependencies": {
-    "thing-it-test": "0.0.13"
+    "thing-it-test": "0.0.13",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
   }
 }
