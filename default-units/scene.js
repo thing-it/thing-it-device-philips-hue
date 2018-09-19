@@ -73,9 +73,7 @@ function Scene(){
      *
      */
     Scene.prototype.start = function(){
-        if(!this.state.sceneActive){
-            this.state.sceneActive = false;
-        }
+        this.state.sceneActive = false;
         this.device.hueApi.scenes()
             .then(function(result){
                 for(var n in result){
