@@ -16,6 +16,30 @@ module.exports = {
             label: "Toggle"
         }],
         state: [{
+            label: "Scenes",
+            id: "scenes",
+            type: {
+                id: "any"
+            }
+        }, {
+            label: "Rooms",
+            id: "rooms",
+            type: {
+                id: "any"
+            }
+        }, {
+            label: "Selected Scene",
+            id: "selesctedScene",
+            type: {
+                id: "any"
+            }
+        }, {
+            label: "Selected Room",
+            id: "selectedRoom",
+            type: {
+                id: "any"
+            }
+        }, {
             label: "Scene Active",
             id: "sceneActive",
             type: {
@@ -49,9 +73,23 @@ function Scene(){
      *
      */
     Scene.prototype.start = function(){
-        if(!this.sceneActive){
-            this.sceneActive = false;
+        if(!this.state.sceneActive){
+            this.state.sceneActive = false;
         }
+        this.device.hueApi.scenes()
+            .then(function(result){
+                for(var n in result){
+                    this.state.scenes.push({sceneName: result[n].name, sceneId: result[n].id} );
+                }
+            }.bind(this)).done();
+
+        this.device.hueApi.groups()
+            .then(function(group){
+                for(var n in group){
+                    this.state.rooms.push({roomName: group[n].name, roomId: group[n].id});
+                }
+            }.bind(this)).done();
+
         this.publishStateChange();
     };
 
@@ -66,6 +104,21 @@ function Scene(){
      *
      */
     Scene.prototype.getState = function () {
+        this.device.hueApi.scenes()
+            .then(function(result){
+                for(var n in result){
+                    this.state.scenes.push({sceneName: result[n].name, sceneId: result[n].id} );
+                }
+            }.bind(this)).done();
+
+        this.device.hueApi.groups()
+            .then(function(result){
+                for(var n in result){
+                    this.state.rooms.push({roomName: result[n].name, roomId: result[n].id});
+                }
+            }.bind(this)).done();
+
+        this.publishStateChange();
         return this.state;
     };
 
@@ -85,18 +138,10 @@ function Scene(){
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            this.device.hueApi.scenes()
-                .then(function(scene){
-                    for(n in scene){
-                        if(scene[n].name === this.configuration.sceneName){
-                            sceneId = scene[n].id;
-                            this.device.hueApi.activateScene(sceneId).then(function(result){
-                                this.logDebug("Scene Active: ", result);
-                                this.publishStateChange();
-                            }.bind(this)).done();
-                        }
-                    }
-                }.bind(this)).done();
+            this.device.hueApi.activateScene(this.state.selectedScene).then(function(result){
+                this.logDebug("Scene Active: ", result);
+                this.publishStateChange();
+            }.bind(this)).done();
         }
     };
 
@@ -109,19 +154,10 @@ function Scene(){
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            var groupId;
-            this.device.hueApi.groups().then(function(group){
-                for(n in group){
-                    if(group[n].name === this.configuration.roomName){
-                        groupId = group[n].id;
-                        console.log(groupId);
-                        this.device.hueApi.setGroupLightState(groupId, hue.lightState.create().off()).then(function (result) {
-                            this.logDebug("Scene Not Active: ",result);
-                            this.publishStateChange();
-                        }.bind(this)).done();
-                    }
-                }
-            }.bind(this)).done();
+            this.device.hueApi.setGroupLightState(this.state.selectedRoom, hue.lightState.create().off()).then(function (result) {
+                this.logDebug("Scene Not Active: ",result);
+                this.publishStateChange();
+                }.bind(this)).done();
         }
     };
 
@@ -129,7 +165,7 @@ function Scene(){
      *
      */
     Scene.prototype.toggle = function () {
-        if (this.state.on) {
+        if (this.state.sceneActive) {
             this.off();
         }
         else {
