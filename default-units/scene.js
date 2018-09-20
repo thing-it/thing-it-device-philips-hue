@@ -80,7 +80,6 @@ function Scene(){
         if (!this.isSimulated()){
 
             var newScenes = [];
-            var newRooms = [];
 
             this.device.hueApi.scenes()
                 .then(function (result) {
@@ -92,17 +91,19 @@ function Scene(){
             this.device.hueApi.groups()
                 .then(function (group) {
                     for (var n in group) {
-                        newRooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
+                        this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
                     }
                 }.bind(this)).done();
 
-            for(var i=0;i<newRooms.length;i++){
-                for(var j=0;j<newScenes.length;j++){
-                    if(newRooms[i].Lights === newScenes[j].Lights){
-                        this.state.rooms.push({roomName: newRooms[i].roomName, roomId: newRooms[i].roomId, sceneName: newScenes[j].sceneName, sceneId: newScenes[j].sceneId});
+            for(var n in this.state.rooms) {
+                if (this.state.selectedRoom === this.state.rooms[n].roomId)
+                    for (var x in newScenes) {
+                        if (this.state.rooms[n].Lights === newScenes[x].Lights) {
+                            this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
+                        }
                     }
-                }
             }
+
             this.publishStateChange();
         }
         deferred.resolve();
@@ -123,8 +124,7 @@ function Scene(){
     Scene.prototype.getState = function () {
 
         var newScenes = [];
-        var newRooms = [];
-
+        
         this.device.hueApi.scenes()
             .then(function (result) {
                 for (var n in result) {
@@ -135,16 +135,17 @@ function Scene(){
         this.device.hueApi.groups()
             .then(function (group) {
                 for (var n in group) {
-                    newRooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
+                    this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
                 }
             }.bind(this)).done();
 
-        for(var i=0;i<newRooms.length;i++){
-            for(var j=0;j<newScenes.length;j++){
-                if(newRooms[i].Lights === newScenes[j].Lights){
-                    this.state.rooms.push({roomName: newRooms[i].roomName, roomId: newRooms[i].roomId, sceneName: newScenes[j].sceneName, sceneId: newScenes[j].sceneId});
+        for(var n in this.state.rooms) {
+            if (this.state.selectedRoom === this.state.rooms[n].roomId)
+                for (var x in newScenes) {
+                    if (this.state.rooms[n].Lights === newScenes[x].Lights) {
+                        this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
+                    }
                 }
-            }
         }
 
         this.publishStateChange();
