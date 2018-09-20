@@ -73,22 +73,41 @@ function Scene(){
      *
      */
     Scene.prototype.start = function(){
+        var deferred = q.defer();
+
         this.state.sceneActive = false;
-        this.device.hueApi.scenes()
-            .then(function(result){
-                for(var n in result){
-                    this.state.scenes.push({sceneName: result[n].name, sceneId: result[n].id} );
-                }
-            }.bind(this)).done();
 
-        this.device.hueApi.groups()
-            .then(function(group){
-                for(var n in group){
-                    this.state.rooms.push({roomName: group[n].name, roomId: group[n].id});
-                }
-            }.bind(this)).done();
+        if (!this.isSimulated()){
 
-        this.publishStateChange();
+            var newScenes = [];
+            var newRooms = [];
+
+            this.device.hueApi.scenes()
+                .then(function (result) {
+                    for (var n in result) {
+                        newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
+                    }
+                }.bind(this)).done();
+
+            this.device.hueApi.groups()
+                .then(function (group) {
+                    for (var n in group) {
+                        newRooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
+                    }
+                }.bind(this)).done();
+
+            for(var i=0;i<newRooms.length;i++){
+                for(var j=0;j<newScenes.length;j++){
+                    if(newRooms[i].Lights === newScenes[j].Lights){
+                        this.state.rooms.push({roomName: newRooms[i].roomName, roomId: newRooms[i].roomId, sceneName: newScenes[j].sceneName, sceneId: newScenes[j].sceneId});
+                    }
+                }
+            }
+            this.publishStateChange();
+        }
+        deferred.resolve();
+
+        return deferred.promise;
     };
 
     /**
@@ -102,19 +121,31 @@ function Scene(){
      *
      */
     Scene.prototype.getState = function () {
+
+        var newScenes = [];
+        var newRooms = [];
+
         this.device.hueApi.scenes()
-            .then(function(result){
-                for(var n in result){
-                    this.state.scenes.push({sceneName: result[n].name, sceneId: result[n].id} );
+            .then(function (result) {
+                for (var n in result) {
+                    newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
                 }
             }.bind(this)).done();
 
         this.device.hueApi.groups()
-            .then(function(result){
-                for(var n in result){
-                    this.state.rooms.push({roomName: result[n].name, roomId: result[n].id});
+            .then(function (group) {
+                for (var n in group) {
+                    newRooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
                 }
             }.bind(this)).done();
+
+        for(var i=0;i<newRooms.length;i++){
+            for(var j=0;j<newScenes.length;j++){
+                if(newRooms[i].Lights === newScenes[j].Lights){
+                    this.state.rooms.push({roomName: newRooms[i].roomName, roomId: newRooms[i].roomId, sceneName: newScenes[j].sceneName, sceneId: newScenes[j].sceneId});
+                }
+            }
+        }
 
         this.publishStateChange();
         return this.state;
