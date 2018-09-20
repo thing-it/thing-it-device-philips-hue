@@ -140,12 +140,13 @@ function Scene(){
             }.bind(this)).done();
 
         for(var n in this.state.rooms) {
-            if (this.state.selectedRoom === this.state.rooms[n].roomId)
+            if (this.state.selectedRoom === this.state.rooms[n].roomId) {
                 for (var x in newScenes) {
                     if (this.state.rooms[n].Lights === newScenes[x].Lights) {
                         this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
                     }
                 }
+            }
         }
 
         this.publishStateChange();
