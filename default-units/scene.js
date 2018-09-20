@@ -167,13 +167,14 @@ function Scene(){
     Scene.prototype.on = function () {
         this.state.sceneActive = true;
         if (this.isSimulated()) {
-            this.publishStateChange();
+            //this.publishStateChange();
         } else {
             this.device.hueApi.activateScene(this.state.selectedScene).then(function(result){
                 this.logDebug("Scene Active: ", result);
                 this.publishStateChange();
             }.bind(this)).done();
         }
+        this.publishStateChange();
     };
 
     /**
@@ -183,13 +184,14 @@ function Scene(){
         this.state.sceneActive = false;
 
         if (this.isSimulated()) {
-            this.publishStateChange();
+            //this.publishStateChange();
         } else {
             this.device.hueApi.setGroupLightState(this.state.selectedRoom, hue.lightState.create().off()).then(function (result) {
                 this.logDebug("Scene Not Active: ",result);
                 this.publishStateChange();
                 }.bind(this)).done();
         }
+        this.publishStateChange();
     };
 
     /**
