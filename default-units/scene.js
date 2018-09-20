@@ -77,7 +77,6 @@ function Scene(){
 
         if (!this.isSimulated()){
 
-            this.state.sceneActive = false;
             var newScenes = [];
 
             this.device.hueApi.scenes()
@@ -85,7 +84,6 @@ function Scene(){
                     for (var n in result) {
                         newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
                     }
-                    this.publishStateChange();
                 }.bind(this)).done();
 
             this.device.hueApi.groups()
@@ -94,7 +92,7 @@ function Scene(){
                         this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
                     }
                     this.publishStateChange();
-                }.bind(this)).done();
+                    }.bind(this)).done();
 
             for(var n in this.state.rooms) {
                 if (this.state.selectedRoom === this.state.rooms[n].roomId)
@@ -137,6 +135,7 @@ function Scene(){
             .then(function (group) {
                 for (var n in group) {
                     this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
+                    this.publishStateChange();
                 }
             }.bind(this)).done();
 
