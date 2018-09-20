@@ -124,7 +124,7 @@ function Scene(){
     Scene.prototype.getState = function () {
 
         var newScenes = [];
-        
+
         this.device.hueApi.scenes()
             .then(function (result) {
                 for (var n in result) {
