@@ -1,1 +1,4 @@
-<ti-scene [state]="component._state" toggle="callActorService(switch, 'toggle'"></ti-scene>
+<ti-light [state]="light._state"
+              (change)="callActorService(light, 'setState', light._state)"
+              (toggle)="callActorService(light, 'toggle', $event)"
+              [options]="{fieldMappings: {switch: 'pseudoSwitch'}, lightState: false, dimmer: false, scene: true}"></ti-light>
