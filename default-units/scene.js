@@ -77,12 +77,13 @@ function Scene(){
 
         if (!this.isSimulated()){
 
-            var newScenes = [];
+            this.newScenes = [];
+            this.state.rooms = [];
 
             this.device.hueApi.scenes()
                 .then(function (result) {
                     for (var n in result) {
-                        newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
+                        this.newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
                     }
                 }.bind(this)).done();
 
@@ -94,15 +95,16 @@ function Scene(){
                     this.publishStateChange();
                     }.bind(this)).done();
 
-            for(var n in this.state.rooms) {
-                if (this.state.selectedRoom === this.state.rooms[n].roomId)
-                    for (var x in newScenes) {
-                        if (this.state.rooms[n].Lights === newScenes[x].Lights) {
-                            this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
-                        }
-                    }
-            }
+            // for(var n in this.state.rooms) {
+            //     if (this.state.selectedRoom === this.state.rooms[n].roomId)
+            //         for (var x in newScenes) {
+            //             if (this.state.rooms[n].Lights === newScenes[x].Lights) {
+            //                 this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
+            //             }
+            //         }
+            // }
 
+            this.state.sceneActive = false;
             this.publishStateChange();
         }
         deferred.resolve();
@@ -122,12 +124,13 @@ function Scene(){
      */
     Scene.prototype.getState = function () {
 
-        var newScenes = [];
+        this.newScenes = [];
+        this.state.rooms = [];
 
         this.device.hueApi.scenes()
             .then(function (result) {
                 for (var n in result) {
-                    newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
+                    this.newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
                 }
             }.bind(this)).done();
 
@@ -138,16 +141,16 @@ function Scene(){
                     this.publishStateChange();
                 }
             }.bind(this)).done();
-
-        for(var n in this.state.rooms) {
-            if (this.state.selectedRoom === this.state.rooms[n].roomId) {
-                for (var x in newScenes) {
-                    if (this.state.rooms[n].Lights === newScenes[x].Lights) {
-                        this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
-                    }
-                }
-            }
-        }
+        //
+        //  for(var n in this.state.rooms) {
+        //     if (this.state.selectedRoom === this.state.rooms[n].roomId) {
+        //         for (var x in newScenes) {
+        //             if (this.state.rooms[n].Lights === newScenes[x].Lights) {
+        //                 this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
+        //             }
+        //         }
+        //     }
+        // }
 
         this.publishStateChange();
         return this.state;
@@ -157,6 +160,18 @@ function Scene(){
      *
      */
     Scene.prototype.setState = function (state){
+        this.state.scenes = [];
+
+        for(var n in state.rooms){
+            if (state.selectedRoom && state.selectedRoom === state.rooms[n].roomId){
+                for(var m in this.newScenes){
+                    if(this.newScenes[m] && this.newScenes[m].Lights === state.rooms[n].Lights){
+                        this.state.scenes.push({sceneName: this.newScenes[m].sceneName, sceneId: this.newScenes[m].sceneId});
+                        this.publishStateChange();
+                    }
+                }
+            }
+        }
     };
 
 
