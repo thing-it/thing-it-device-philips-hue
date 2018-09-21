@@ -177,7 +177,7 @@ function HueBridge() {
 
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
-            this.logDebug("Hue API", this.hueApi);
+            this.logInfo("Hue API", this.hueApi);
 
             deferred.resolve();
         }
