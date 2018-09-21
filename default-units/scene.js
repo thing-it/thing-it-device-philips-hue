@@ -78,22 +78,29 @@ function Scene(){
         if (!this.isSimulated()){
 
             this.newScenes = [];
-            this.state.rooms = [];
 
-            this.device.hueApi.scenes()
-                .then(function (result) {
-                    for (var n in result) {
-                        this.newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
-                    }
-                }.bind(this)).done();
+            this.state = {
+                rooms: [],
+                scenes: []
+            };
 
-            this.device.hueApi.groups()
-                .then(function (group) {
-                    for (var n in group) {
-                        this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
-                    }
-                    this.publishStateChange();
-                    }.bind(this)).done();
+            this.device.hueApi.groups().then((groups) => {
+
+                groups.forEach((room) => {
+                    this.state.rooms.push({roomName: room.name, roomId: room.id, lights: room.lights});
+                });
+
+            }).catch((error) => {
+                this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+            });
+
+
+            // this.device.hueApi.scenes().then((scenes) => {
+            //     scenes.forEach((scene) => {
+            //         this.newScenes.push({sceneName: scene.name, sceneId: scene.id, Lights: scene.lights});
+            //     });
+            // });
+
 
             // for(var n in this.state.rooms) {
             //     if (this.state.selectedRoom === this.state.rooms[n].roomId)
@@ -104,9 +111,10 @@ function Scene(){
             //         }
             // }
 
-            this.state.sceneActive = false;
-            this.publishStateChange();
+            //this.state.sceneActive = false;
+
         }
+
         deferred.resolve();
 
         return deferred.promise;
@@ -123,36 +131,6 @@ function Scene(){
      *
      */
     Scene.prototype.getState = function () {
-
-        this.newScenes = [];
-        this.state.rooms = [];
-
-        this.device.hueApi.scenes()
-            .then(function (result) {
-                for (var n in result) {
-                    this.newScenes.push({sceneName: result[n].name, sceneId: result[n].id, Lights: result[n].lights});
-                }
-            }.bind(this)).done();
-
-        this.device.hueApi.groups()
-            .then(function (group) {
-                for (var n in group) {
-                    this.state.rooms.push({roomName: group[n].name, roomId: group[n].id, Lights: group[n].lights});
-                    this.publishStateChange();
-                }
-            }.bind(this)).done();
-        //
-        //  for(var n in this.state.rooms) {
-        //     if (this.state.selectedRoom === this.state.rooms[n].roomId) {
-        //         for (var x in newScenes) {
-        //             if (this.state.rooms[n].Lights === newScenes[x].Lights) {
-        //                 this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
-        //             }
-        //         }
-        //     }
-        // }
-
-        this.publishStateChange();
         return this.state;
     };
 
@@ -167,11 +145,12 @@ function Scene(){
                 for(var m in this.newScenes){
                     if(this.newScenes[m] && this.newScenes[m].Lights === state.rooms[n].Lights){
                         this.state.scenes.push({sceneName: this.newScenes[m].sceneName, sceneId: this.newScenes[m].sceneId});
-                        this.publishStateChange();
                     }
                 }
             }
         }
+
+        this.publishStateChange();
     };
 
 

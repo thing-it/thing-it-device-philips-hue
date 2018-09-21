@@ -9,6 +9,7 @@ describe('[thing-it] Philips Hue Plugin', function () {
         testDriver.registerDevicePlugin(__dirname + "/../hueBridge");
         testDriver.registerUnitPlugin(__dirname + "/../default-units/lightBulb");
         testDriver.registerUnitPlugin(__dirname + "/../default-units/livingColorLamp");
+        testDriver.registerUnitPlugin(__dirname + "/../default-units/scene");
     });
     describe('Start Configuration', function () {
         this.timeout(5000);
