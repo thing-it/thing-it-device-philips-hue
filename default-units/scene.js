@@ -151,8 +151,7 @@ function Scene(){
         //         }
         //     }
         // }
-
-        this.publishStateChange();
+        
         return this.state;
     };
 
