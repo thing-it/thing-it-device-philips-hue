@@ -1,1 +1,3 @@
-<ti-scene state="component._state" toggle="panel.callActorService(switch, 'toggle', $event)"></ti-scene>
+<ti-scene [state]="component._state"
+          (change)="callActorService(component, 'setState', component._state)"
+          (toggle)="callActorService(component, 'toggle', $event)"></ti-scene>
