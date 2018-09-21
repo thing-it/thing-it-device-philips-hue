@@ -16,6 +16,7 @@
     "url": "https://github.com/marcgille/thing-it-device-philips-hue"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
     "node-hue-api": "2.2.0"
   },
   "devDependencies": {

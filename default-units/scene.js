@@ -67,6 +67,7 @@ module.exports = {
 
 var q = require('q');
 var hue = require('node-hue-api');
+var _ = require('lodash')
 
 function Scene(){
     /**
