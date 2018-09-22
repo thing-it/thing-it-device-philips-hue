@@ -40,21 +40,21 @@ module.exports = {
                 id: "any"
             }
         }, {
-            label: "Scene Active",
-            id: "sceneActive",
+            label: "Active",
+            id: "active",
             type: {
                 id: "boolean"
             }
         }],
         configuration: [{
-            label: "Scene Name",
-            id: "sceneName",
+            label: "Scene",
+            id: "scene",
             type: {
                 id: "string"
             },
         }, {
-            label: "Room Name",
-            id: "roomName",
+            label: "Room",
+            id: "room",
             type:{
                 id: "string"
             }
@@ -78,7 +78,6 @@ function Scene(){
 
         if (!this.isSimulated()){
 
-            this.state.rooms = [];
             this.newScenes = [];
 
             this.state = {
@@ -86,36 +85,31 @@ function Scene(){
                 scenes: []
             };
 
+            if (this.configuration.room) {
+                this.state.selectedRoom = this.configuration.room;
+            }
+
+            if (this.configuration.scene) {
+                this.state.selectedScene = this.configuration.scene;
+            }
+
             this.device.hueApi.groups().then((groups) => {
-
                 groups.forEach((room) => {
-                    this.state.rooms.push(room);
+                    if (room.type === 'Room') {
+                        this.state.rooms.push(room);
+                    }
                 });
-
             }).catch((error) => {
                 this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
             });
-
 
             this.device.hueApi.scenes().then((scenes) => {
                 scenes.forEach((scene) => {
-                    this.newScenes.push({sceneName: scene.name, sceneId: scene.id, lights: scene.lights});
+                    this.newScenes.push(scene);
                 });
             }).catch((error) => {
                 this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
             });
-
-
-            // for(var n in this.state.rooms) {
-            //     if (this.state.selectedRoom === this.state.rooms[n].roomId)
-            //         for (var x in newScenes) {
-            //             if (this.state.rooms[n].Lights === newScenes[x].Lights) {
-            //                 this.state.scenes.push({sceneName: newScenes[x].sceneName, sceneId: newScenes[x].sceneId});
-            //             }
-            //         }
-            // }
-
-            //this.state.sceneActive = false;
 
         }
 
@@ -135,6 +129,7 @@ function Scene(){
      *
      */
     Scene.prototype.getState = function () {
+        this.logInfo('>> getState: ' + JSON.stringify(this.state));
         return this.state;
     };
 
@@ -142,17 +137,32 @@ function Scene(){
      *
      */
     Scene.prototype.setState = function (state){
-        let group = _.find(this.state.rooms, (group) => {
-            if (group && group.id === this.state.selectedRoom) {
-                return group;
-            }
-        });
-        this.state.scenes = _.filter(this.newScenes, (scene) => {
-            console.log(_.intersection(scene.lights, group.lights));
-            if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
-                return scene;
-            }
-        });
+        this.logInfo('>> setState: ' + JSON.stringify(this.state));
+        this.state = state;
+
+        if (this.state.selectedRoom) {
+
+            this.configuration.room = this.state.selectedRoom;
+
+            let group = _.find(this.state.rooms, (group) => {
+                if (group && group.id === this.state.selectedRoom) {
+                    return group;
+                }
+            });
+
+            this.state.scenes = _.filter(this.newScenes, (scene) => {
+                if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
+                    return scene;
+                }
+            });
+
+        }
+
+        if (this.state.selectedScene) {
+            this.configuration.scene = this.state.selectedScene;
+        }
+
+        this.publishStateChange();
     };
 
 
@@ -160,13 +170,19 @@ function Scene(){
      *
      */
     Scene.prototype.on = function () {
-        this.state.sceneActive = true;
+
+        this.logInfo('>> on: ' + this.state.active);
+
+        this.state.active = true;
+
         if (this.isSimulated()) {
-            //this.publishStateChange();
+            this.publishStateChange();
         } else {
-            this.device.hueApi.activateScene(this.state.selectedScene).then(function(result){
-                this.logDebug("Scene Active: ", result);
-            }.bind(this)).done();
+            if (this.configuration.scene) {
+                this.device.hueApi.activateScene(this.configuration.scene).then((result) => {
+                    this.publishStateChange();
+                });
+            }
         }
     };
 
@@ -174,23 +190,32 @@ function Scene(){
      *
      */
     Scene.prototype.off = function () {
-        this.state.sceneActive = false;
+
+        this.logInfo('>> off: ' + this.state.active);
+
+        this.state.active = false;
 
         if (this.isSimulated()) {
+            this.publishStateChange();
         } else {
-            this.device.hueApi.setGroupLightState(this.state.selectedRoom, hue.lightState.create().off()).then(function (result) {
-                this.logDebug("Scene Not Active: ",result);
-                this.publishStateChange();
-                }.bind(this)).done();
+            if (this.configuration.room) {
+                this.device.hueApi.setGroupLightState(this.configuration.room, hue.lightState.create().off()).then((result) => {
+                    this.publishStateChange();
+                });
+            }
         }
-        //this.publishStateChange();
     };
 
     /**
      *
      */
-    Scene.prototype.toggle = function () {
-        if (this.state.sceneActive) {
+    Scene.prototype.toggle = function (state) {
+
+        this.state = state;
+
+        this.logInfo('>> toggle: ' + this.state.active);
+
+        if (this.state.active) {
             this.off();
         }
         else {
