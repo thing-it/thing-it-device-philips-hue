@@ -181,6 +181,7 @@ function HueBridge() {
             if (!hue) {
                 hue = require('node-hue-api');
             }
+            this.state = {rooms: []};
 
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
