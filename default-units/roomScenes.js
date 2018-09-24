@@ -1,9 +1,9 @@
 module.exports = {
     metadata: {
-        plugin: "scene",
-        label: "Scene",
+        plugin: "roomScenes",
+        label: "Room Scenes",
         role: "actor",
-        family: "scene",
+        family: "roomScenes",
         deviceTypes: ["philips-hue/hueBridge"],
         services: [{
             id: "on",
@@ -28,7 +28,7 @@ module.exports = {
                 id: "any"
             }
         }, {
-            label: "Selected Scene",
+            label: "Selected RoomScenes",
             id: "selectedScene",
             type: {
                 id: "any"
@@ -47,7 +47,7 @@ module.exports = {
             }
         }],
         configuration: [{
-            label: "Scene",
+            label: "RoomScenes",
             id: "scene",
             type: {
                 id: "string"
@@ -61,19 +61,19 @@ module.exports = {
         }]
     },
     create: function () {
-        return new Scene();
+        return new RoomScenes();
     }
 };
 
 var q = require('q');
 var hue = require('node-hue-api');
-var _ = require('lodash')
+var _ = require('lodash');
 
-function Scene(){
+function RoomScenes(){
     /**
      *
      */
-    Scene.prototype.start = function(){
+    RoomScenes.prototype.start = function(){
         var deferred = q.defer();
 
         if (!this.isSimulated()){
@@ -121,14 +121,14 @@ function Scene(){
     /**
      *
      */
-    Scene.prototype.stop = function () {
+    RoomScenes.prototype.stop = function () {
 
     };
 
     /**
      *
      */
-    Scene.prototype.getState = function () {
+    RoomScenes.prototype.getState = function () {
         this.logInfo('>> getState: ' + JSON.stringify(this.state));
         return this.state;
     };
@@ -136,7 +136,7 @@ function Scene(){
     /**
      *
      */
-    Scene.prototype.setState = function (state){
+    RoomScenes.prototype.setState = function (state){
         this.logInfo('>> setState: ' + JSON.stringify(this.state));
         this.state = state;
 
@@ -169,7 +169,7 @@ function Scene(){
     /**
      *
      */
-    Scene.prototype.on = function () {
+    RoomScenes.prototype.on = function () {
 
         this.logInfo('>> on: ' + this.state.active);
 
@@ -189,7 +189,7 @@ function Scene(){
     /**
      *
      */
-    Scene.prototype.off = function () {
+    RoomScenes.prototype.off = function () {
 
         this.logInfo('>> off: ' + this.state.active);
 
@@ -209,7 +209,7 @@ function Scene(){
     /**
      *
      */
-    Scene.prototype.toggle = function (state) {
+    RoomScenes.prototype.toggle = function (state) {
 
         this.state = state;
 
