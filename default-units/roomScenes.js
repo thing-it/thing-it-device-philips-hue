@@ -11,9 +11,6 @@ module.exports = {
         }, {
             id: "off",
             label: "Off"
-        }, {
-            id: "toggle",
-            label: "Toggle"
         }],
         state: [{
             label: "Scenes",
@@ -22,8 +19,8 @@ module.exports = {
                 id: "any"
             }
         }, {
-            label: "Activated Scene",
-            id: "activatedScene",
+            label: "Active Scene",
+            id: "activeScene",
             type: {
                 id: "string"
             }
@@ -124,9 +121,8 @@ function RoomScenes(){
             this.publishStateChange();
         } else {
             if (sceneId) {
-                //TODO: is it required to deactivate an acticated scene before activiting a new scene?
                 this.device.hueApi.activateScene(sceneId).then((result) => {
-                    this.state.activatedScene = sceneId;
+                    this.state.activeScene = sceneId;
                     this.publishStateChange();
                 });
             }
@@ -149,22 +145,4 @@ function RoomScenes(){
         }
     };
 
-    /**
-     *
-     */
-    RoomScenes.prototype.toggle = function (state) {
-
-        // TODO: do we need a toggle?
-
-        this.state = state;
-
-        this.logInfo('>> toggle: ' + this.state.active);
-
-        if (this.state.active) {
-            this.off();
-        }
-        else {
-            this.on();
-        }
-    };
 }
