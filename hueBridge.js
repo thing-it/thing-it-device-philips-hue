@@ -8,6 +8,13 @@ module.exports = {
         actorTypes: [],
         sensorTypes: [],
         services: [],
+        state: [{
+            id: "rooms",
+            label: "Rooms",
+            type:{
+                id: "any"
+            }
+        }],
         configuration: [{
             id: "host",
             label: "Host",
@@ -178,6 +185,16 @@ function HueBridge() {
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
             this.logInfo("Hue API", this.hueApi);
+
+            this.device.hueApi.groups().then((groups) => {
+                groups.forEach((room) => {
+                    if (room.type === 'Room') {
+                        this.state.rooms.push({roomName: room.name, roomId: room.id});
+                    }
+                });
+            }).catch((error) => {
+                this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+            });
 
             deferred.resolve();
         }
