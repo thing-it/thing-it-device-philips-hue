@@ -22,37 +22,13 @@ module.exports = {
                 id: "any"
             }
         }, {
-            label: "Rooms",
-            id: "rooms",
+            label: "Activated Scene",
+            id: "activatedScene",
             type: {
-                id: "any"
-            }
-        }, {
-            label: "Selected RoomScenes",
-            id: "selectedScene",
-            type: {
-                id: "any"
-            }
-        }, {
-            label: "Selected Room",
-            id: "selectedRoom",
-            type: {
-                id: "any"
-            }
-        }, {
-            label: "Active",
-            id: "active",
-            type: {
-                id: "boolean"
+                id: "string"
             }
         }],
         configuration: [{
-            label: "RoomScenes",
-            id: "scene",
-            type: {
-                id: "string"
-            },
-        }, {
             label: "Room",
             id: "room",
             type:{
@@ -81,35 +57,28 @@ function RoomScenes(){
             this.newScenes = [];
 
             this.state = {
-                rooms: [],
                 scenes: []
             };
 
             if (this.configuration.room) {
-                this.state.selectedRoom = this.configuration.room;
-            }
 
-            if (this.configuration.scene) {
-                this.state.selectedScene = this.configuration.scene;
-            }
-
-            this.device.hueApi.groups().then((groups) => {
-                groups.forEach((room) => {
-                    if (room.type === 'Room') {
-                        this.state.rooms.push(room);
+                let group = _.find(this.state.rooms, (group) => {
+                    if (group && group.id === this.configuration.room) {
+                        return group;
                     }
                 });
-            }).catch((error) => {
-                this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
-            });
 
-            this.device.hueApi.scenes().then((scenes) => {
-                scenes.forEach((scene) => {
-                    this.newScenes.push(scene);
+                this.device.hueApi.scenes().then((scenes) => {
+                    this.state.scenes = _.filter(scenes, (scene) => {
+                        if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
+                            return scene;
+                        }
+                    });
+                }).catch((error) => {
+                    this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
                 });
-            }).catch((error) => {
-                this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
-            });
+
+            }
 
         }
 
@@ -137,31 +106,7 @@ function RoomScenes(){
      *
      */
     RoomScenes.prototype.setState = function (state){
-        this.logInfo('>> setState: ' + JSON.stringify(this.state));
         this.state = state;
-
-        if (this.state.selectedRoom) {
-
-            this.configuration.room = this.state.selectedRoom;
-
-            let group = _.find(this.state.rooms, (group) => {
-                if (group && group.id === this.state.selectedRoom) {
-                    return group;
-                }
-            });
-
-            this.state.scenes = _.filter(this.newScenes, (scene) => {
-                if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
-                    return scene;
-                }
-            });
-
-        }
-
-        if (this.state.selectedScene) {
-            this.configuration.scene = this.state.selectedScene;
-        }
-
         this.publishStateChange();
     };
 
@@ -169,17 +114,19 @@ function RoomScenes(){
     /**
      *
      */
-    RoomScenes.prototype.on = function () {
+    RoomScenes.prototype.on = function (params) {
 
-        this.logInfo('>> on: ' + this.state.active);
+        let sceneId = params.sceneId;
 
-        this.state.active = true;
+        this.logInfo('>> on: ' + sceneId);
 
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            if (this.configuration.scene) {
-                this.device.hueApi.activateScene(this.configuration.scene).then((result) => {
+            if (sceneId) {
+                //TODO: is it required to deactivate an acticated scene before activiting a new scene?
+                this.device.hueApi.activateScene(sceneId).then((result) => {
+                    this.state.activatedScene = sceneId;
                     this.publishStateChange();
                 });
             }
@@ -190,10 +137,6 @@ function RoomScenes(){
      *
      */
     RoomScenes.prototype.off = function () {
-
-        this.logInfo('>> off: ' + this.state.active);
-
-        this.state.active = false;
 
         if (this.isSimulated()) {
             this.publishStateChange();
@@ -210,6 +153,8 @@ function RoomScenes(){
      *
      */
     RoomScenes.prototype.toggle = function (state) {
+
+        // TODO: do we need a toggle?
 
         this.state = state;
 
