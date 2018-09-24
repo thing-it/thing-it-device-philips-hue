@@ -186,7 +186,7 @@ function HueBridge() {
 
             this.logInfo("Hue API", this.hueApi);
 
-            new hue.HueApi(this.configuration.host, this.configuration.userName).groups().then((groups) => {
+            this.hueApi.groups().then((groups) => {
                 groups.forEach((room) => {
                     if (room.type === 'Room') {
                         this.state.rooms.push({roomName: room.name, roomId: room.id});
