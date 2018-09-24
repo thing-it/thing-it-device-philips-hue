@@ -57,29 +57,50 @@ function RoomScenes(){
                 scenes: []
             };
 
+            this.logInfo('>> start:room:' + this.configuration.room);
+
             if (this.configuration.room) {
 
-                let group = _.find(this.state.rooms, (group) => {
-                    if (group && group.id === this.configuration.room) {
-                        return group;
-                    }
-                });
+                this.device.hueApi.groups().then((groups) => {
 
-                this.device.hueApi.scenes().then((scenes) => {
-                    this.state.scenes = _.filter(scenes, (scene) => {
-                        if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
-                            return scene;
+                    let group = _.find(groups, (room) => {
+                        if (room.type === 'Room' && room.id === this.configuration.room) {
+                            return room;
                         }
                     });
+
+                    if (group) {
+
+                        this.device.hueApi.scenes().then((scenes) => {
+
+                            this.state.scenes = _.filter(scenes, (scene) => {
+                                if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
+                                    return scene;
+                                }
+                            });
+
+                            deferred.resolve();
+
+                        }).catch((error) => {
+                            this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+                            deferred.reject(error);
+                        });
+
+                    } else {
+                        deferred.resolve();
+                    }
+
+
                 }).catch((error) => {
                     this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+                    deferred.reject(error);
                 });
 
+            } else {
+                deferred.resolve();
             }
 
         }
-
-        deferred.resolve();
 
         return deferred.promise;
     };
@@ -113,7 +134,7 @@ function RoomScenes(){
      */
     RoomScenes.prototype.on = function (params) {
 
-        let sceneId = params.sceneId;
+        const sceneId = params.scene;
 
         this.logInfo('>> on: ' + sceneId);
 

@@ -181,23 +181,30 @@ function HueBridge() {
             if (!hue) {
                 hue = require('node-hue-api');
             }
-            this.state = {rooms: []};
+            this.state = {
+                rooms: []
+            };
 
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
 
             this.logInfo("Hue API", this.hueApi);
 
             this.hueApi.groups().then((groups) => {
+
                 groups.forEach((room) => {
+
                     if (room.type === 'Room') {
-                        this.state.rooms.push({roomName: room.name, roomId: room.id});
+                        this.state.rooms.push({id: room.id, name: room.name});
                     }
                 });
+
+                deferred.resolve();
+
             }).catch((error) => {
                 this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+                deferred.reject(error);
             });
 
-            deferred.resolve();
         }
 
         return deferred.promise;
@@ -218,12 +225,13 @@ function HueBridge() {
      *
      */
     HueBridge.prototype.getState = function () {
-        return {};
+        return this.state;
     };
 
     /**
      *
      */
-    HueBridge.prototype.setState = function () {
+    HueBridge.prototype.setState = function (state) {
+        this.state = state;
     };
 }
