@@ -74,7 +74,7 @@ function RoomScenes(){
                         this.device.hueApi.scenes().then((scenes) => {
 
                             this.state.scenes = _.filter(scenes, (scene) => {
-                                if (_.intersection(scene.lights, group.lights).length === group.lights.length) {
+                                if (_.isEqual(scene.lights, group.lights)) {
                                     return scene;
                                 }
                             });
