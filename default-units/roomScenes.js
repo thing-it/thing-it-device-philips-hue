@@ -134,16 +134,17 @@ function RoomScenes(){
      */
     RoomScenes.prototype.on = function (params) {
 
-        const sceneId = params.scene;
+        const scene = params.scene;
 
-        this.logInfo('>> on: ' + sceneId);
+        this.logInfo('>> on: ' + JSON.stringify(scene));
 
         if (this.isSimulated()) {
             this.publishStateChange();
         } else {
-            if (sceneId) {
-                this.device.hueApi.activateScene(sceneId).then((result) => {
-                    this.state.activeScene = sceneId;
+            if (scene) {
+                this.device.hueApi.activateScene(scene.id).then((result) => {
+                    this.logInfo('>> ' + JSON.stringify(result));
+                    this.state.activeScene = scene.id;
                     this.publishStateChange();
                 });
             }
