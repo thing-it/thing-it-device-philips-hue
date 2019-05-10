@@ -1,3 +1,4 @@
 <ti-room-scenes [state]="component._state"
+          [options]="{toggle: component.configuration.enableToggle}"
           (on)="panel.callActorService(component, 'on', $event)"
           (off)="panel.callActorService(component, 'off', $event)"></ti-room-scenes>

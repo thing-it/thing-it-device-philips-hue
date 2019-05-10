@@ -31,6 +31,13 @@ module.exports = {
             type:{
                 id: "string"
             }
+        }, {
+            label: "Enable Toggle Switch",
+            id: "enableToggle",
+            type:{
+                id: "boolean"
+            },
+            defaultValue: false
         }]
     },
     create: function () {
