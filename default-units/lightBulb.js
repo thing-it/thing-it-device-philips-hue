@@ -63,6 +63,12 @@ function LightBulb() {
     LightBulb.prototype.start = function () {
         var deferred = q.defer();
 
+        this.operationalState = {
+            status: 'PENDING',
+            message: 'Waiting for initialization...'
+        };
+        this.publishOperationalStateChange();
+
         this.state = {
             brightness: 0,
             brightnessPercent: 0,
@@ -83,6 +89,12 @@ function LightBulb() {
                     }.bind(this));
             }.bind(this), 10000);
         }
+
+        this.operationalState = {
+            status: 'OK',
+            message: 'Light Bulb successfully initialized'
+        }
+        this.publishOperationalStateChange();
 
         deferred.resolve();
 

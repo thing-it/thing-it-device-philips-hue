@@ -136,6 +136,12 @@ function LivingColorLamp() {
     LivingColorLamp.prototype.start = function () {
         var deferred = q.defer();
 
+        this.operationalState = {
+            status: 'PENDING',
+            message: 'Waiting for initialization...'
+        };
+        this.publishOperationalStateChange();
+
         this.state = {
             on: true,
             brightness: 254,
@@ -150,6 +156,12 @@ function LivingColorLamp() {
             reachable: true,
             rgbHex: "#FFFFFF"
         };
+
+        this.operationalState = {
+            status: 'OK',
+            message: 'Living Color Lamp successfully initialized'
+        }
+        this.publishOperationalStateChange();
 
         deferred.resolve();
 

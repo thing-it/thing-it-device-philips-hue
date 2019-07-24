@@ -175,7 +175,19 @@ function HueBridge() {
     HueBridge.prototype.start = function () {
         var deferred = q.defer();
 
+        this.operationalState = {
+            status: 'PENDING',
+            message: 'Waiting for initialization...'
+        };
+        this.publishOperationalStateChange();
+
         if (this.isSimulated()) {
+            this.operationalState = {
+                status: 'OK',
+                message: 'Philips Hue Bridge successfully initialized'
+            }
+            this.publishOperationalStateChange();
+
             deferred.resolve();
         } else {
             if (!hue) {
@@ -198,9 +210,21 @@ function HueBridge() {
                     }
                 });
 
+                this.operationalState = {
+                    status: 'OK',
+                    message: 'Philips Hue Bridge successfully initialized'
+                }
+                this.publishOperationalStateChange();
+
                 deferred.resolve();
 
             }).catch((error) => {
+                this.operationalState = {
+                    status: 'ERROR',
+                    message: 'Philips Hue Bridge initialization error'
+                }
+                this.publishOperationalStateChange();
+
                 this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
                 deferred.reject(error);
             });

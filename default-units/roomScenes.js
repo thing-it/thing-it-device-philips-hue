@@ -56,6 +56,12 @@ function RoomScenes(){
     RoomScenes.prototype.start = function(){
         var deferred = q.defer();
 
+        this.operationalState = {
+            status: 'PENDING',
+            message: 'Waiting for initialization...'
+        };
+        this.publishOperationalStateChange();
+
         if (!this.isSimulated()){
 
             this.newScenes = [];
@@ -86,27 +92,67 @@ function RoomScenes(){
                                 }
                             });
 
+                            this.operationalState = {
+                                status: 'OK',
+                                message: 'Room Scenes successfully initialized'
+                            }
+                            this.publishOperationalStateChange();
+
                             deferred.resolve();
 
                         }).catch((error) => {
                             this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+                            
+                            this.operationalState = {
+                                status: 'ERROR',
+                                message: 'Room Scenes initialization error'
+                            }
+                            this.publishOperationalStateChange();
+
                             deferred.reject(error);
                         });
 
                     } else {
+                        this.operationalState = {
+                            status: 'OK',
+                            message: 'Room Scenes successfully initialized'
+                        }
+                        this.publishOperationalStateChange();
+
                         deferred.resolve();
                     }
 
 
                 }).catch((error) => {
                     this.logError("Error accessing Hue Bridge: ", JSON.stringify(error));
+
+                    this.operationalState = {
+                        status: 'ERROR',
+                        message: 'Room Scenes initialization error'
+                    }
+                    this.publishOperationalStateChange();
+
                     deferred.reject(error);
                 });
 
             } else {
+                this.operationalState = {
+                    status: 'OK',
+                    message: 'Room Scenes successfully initialized'
+                }
+                this.publishOperationalStateChange();
+
                 deferred.resolve();
             }
 
+        } else {
+            this.operationalState = {
+                status: 'OK',
+                message: 'Room Scenes successfully initialized'
+            }
+            this.publishOperationalStateChange();
+
+            deferred.resolve();     
         }
 
         return deferred.promise;
