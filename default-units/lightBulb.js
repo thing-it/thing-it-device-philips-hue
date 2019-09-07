@@ -17,6 +17,19 @@ module.exports = {
         }, {
             id: "setBrightnessPercent",
             label: "Set Brightness (%)"
+        },
+        {
+            id: "dimmerChange",
+            label: "Dimmer Change",
+            parameters: [
+                {
+                    label: 'Dimmer Level',
+                    id: 'dimmerLevel',
+                    type: {
+                        id: 'decimal'
+                    }
+                }
+            ]
         }],
         state: [
             {
@@ -188,7 +201,7 @@ function LightBulb() {
     };
 
     /**
-     *
+     * 
      */
     LightBulb.prototype.setBrightnessPercent = function (parameters) {
         this.state.brightnessPercent = parameters.brightnessPercent;
@@ -202,4 +215,27 @@ function LightBulb() {
             }.bind(this));
         }
     };
+
+    /**
+     * Brightness update service
+     * @input {{dimmerLevel:number}} param - dimmer level
+     */
+    LightBulb.prototype.dimmerChange = function (param) {
+        let paramDimmerLevel = param.hasOwnProperty('dimmerLevel') ? param.dimmerLevel : null;
+
+        if (paramDimmerLevel !== null && this.state.brightnessPercent !== paramDimmerLevel) {
+
+            this.state.brightnessPercent = paramDimmerLevel;
+            this.state.brightness = paramDimmerLevel / 100;
+
+            if (this.isSimulated()) {
+                this.publishStateChange();
+            }
+            else {
+                this.device.hueApi.setLightState(this.configuration.id, hue.lightState.create().on().brightness(this.state.brightnessPercent)).then(function () {
+                    this.publishStateChange();
+                }.bind(this));
+            }
+        }
+    }
 };

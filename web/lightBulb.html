@@ -1,4 +1,4 @@
     <ti-light [state]="component._state"
-              (change)="panel.callActorService(dimmer, 'setState', component._state)"
               (toggle)="panel.callActorService(dimmer, 'toggle', $event)"
+              (dimmerChange)="panel.callActorService(component, 'dimmerChange', $event)"
               [options]="{fieldMappings: {switch: 'pseudoSwitch'}, lightState: true, dimmer: true, scene: false}"></ti-light>
