@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "node-hue-api": "2.2.0"
+    "node-hue-api": "^5.0.0-beta.16"
   },
   "devDependencies": {
-    "thing-it-test": "0.0.13",
     "eslint": "^5.6.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0"
+    "eslint-plugin-standard": "^3.1.0",
+    "thing-it-test": "^0.1.1"
   }
 }
