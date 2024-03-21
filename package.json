@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
-    "node-hue-api": "^5.0.0-beta.16"
+    "node-hue-api": "2.2.0"
   },
   "devDependencies": {
     "eslint": "^5.6.0",
