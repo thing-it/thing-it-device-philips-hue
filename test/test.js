@@ -1,1 +1,1 @@
-var hue = require('node-hue-api');
+var hue = require('node-hue-api-v2-shim');

@@ -167,7 +167,7 @@ function LivingColorLamp() {
 
         if (!this.isSimulated()) {
             if (!hue) {
-                hue = require('node-hue-api');
+                hue = require('node-hue-api-v2-shim');
             }
 
             this.interval = setInterval(function () {

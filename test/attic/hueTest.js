@@ -1,4 +1,4 @@
-var hue = require("node-hue-api");
+var hue = require("node-hue-api-v2-shim");
 var sleep = require('sleep');
 
 console.log("Scanning network for Hue Bridges");

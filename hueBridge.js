@@ -89,7 +89,7 @@ function HueBridgeDiscovery() {
             }.bind(this), 20000);
         } else {
             if (!hue) {
-                hue = require("node-hue-api");
+                hue = require("node-hue-api-v2-shim");
             }
 
             // TODO For now, need to be able to switch for Discovery or inherit from Device
@@ -191,13 +191,17 @@ function HueBridge() {
             deferred.resolve();
         } else {
             if (!hue) {
-                hue = require('node-hue-api');
+                hue = require('node-hue-api-v2-shim');
             }
             this.state = {
                 rooms: []
             };
-
+            setTimeout(function () {
+                            console.log("Hue API", this.hueApi);
+                        }, 10000);
             this.hueApi = hue.HueApi(this.configuration.host, this.configuration.userName);
+
+            
 
             this.logInfo("Hue API", this.hueApi);
 

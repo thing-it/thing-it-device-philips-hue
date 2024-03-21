@@ -46,7 +46,7 @@ module.exports = {
 };
 
 var q = require('q');
-var hue = require('node-hue-api');
+var hue = require('node-hue-api-v2-shim');
 var _ = require('lodash');
 
 function RoomScenes(){
